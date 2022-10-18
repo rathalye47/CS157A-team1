@@ -61,12 +61,18 @@ hr {
 .registerbutton:hover {
   opacity: 1;
 }
-
+.message {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translate(-50%, -50%);
+  margin: 0 auto;
+}
 </style>
 </head>
 <body>
 
-<form action="register.jsp">
+<form method = 'post' action="register.jsp">
   <div class="container">
     <h1>Create Account</h1>
     <p>Please create a username and password to register.</p>
@@ -87,7 +93,7 @@ hr {
 
 <%
 if (request.getParameter("username") != null) {
-  int user_id = 4;
+  int user_id = 0;
   String username = request.getParameter("username");
   String password = request.getParameter("password");
   String db = "FeedMeUp";
@@ -100,9 +106,17 @@ if (request.getParameter("username") != null) {
     con = DriverManager.getConnection("jdbc:mysql://localhost:3306/FeedMeUp?autoReconnect=true&useSSL=false", un, pw);
 
     Statement stmt = con.createStatement();
-    String query = String.format("INSERT INTO Users VALUES('%d', '%s', '%s')", user_id, username, password);
+    ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM Users");
+    while (rs.next()) {
+    	user_id = rs.getInt(1) + 1;
+    }
+    String query = String.format("INSERT INTO Users VALUES('%d', '%s', SHA('%s'))", user_id, username, password);
     int rows = stmt.executeUpdate(query);
-    
+    if(rows != 0) { 
+        %> <div class="message"><p>Registration Successful</p></div> <% 
+    } else { 
+        %> <div class="message"><p>Registration Unsuccessful</p></div> <% 
+    }
     stmt.close();
     con.close();
   }
