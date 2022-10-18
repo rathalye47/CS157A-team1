@@ -85,5 +85,34 @@ hr {
   </div>
 </form>
 
+<%
+if (request.getParameter("username") != null) {
+  int user_id = 4;
+  String username = request.getParameter("username");
+  String password = request.getParameter("password");
+  String db = "FeedMeUp";
+  String un = "root";
+  String pw = "root";
+
+  try {
+    java.sql.Connection con; 
+    Class.forName("com.mysql.jdbc.Driver");
+    con = DriverManager.getConnection("jdbc:mysql://localhost:3306/FeedMeUp?autoReconnect=true&useSSL=false", un, pw);
+
+    Statement stmt = con.createStatement();
+    String query = String.format("INSERT INTO Users VALUES('%d', '%s', '%s')", user_id, username, password);
+    int rows = stmt.executeUpdate(query);
+    
+    stmt.close();
+    con.close();
+  }
+
+  catch(SQLException e) {
+    out.println("SQLException caught: " + e.getMessage());
+  }
+}
+
+%>
+
 </body>
 </html>
