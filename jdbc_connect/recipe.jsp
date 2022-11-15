@@ -1,4 +1,5 @@
 <!-- Code reference: https://www.w3schools.com/howto/howto_css_register_form.asp -->
+<!-- Code reference: https://www.w3schools.com/howto/howto_css_contact_form.asp -->
 
 <%@ page import="java.sql.*"%>
 
@@ -54,7 +55,7 @@ hr {
   background-color: #04AA6D;
   color: white;
   padding: 16px 20px;
-  margin: 8px 250;
+  margin: 8px 245;
   border: none;
   cursor: pointer;
   width: 25%;
@@ -66,10 +67,8 @@ hr {
 
 .message {
   position: fixed;
-  left: 50%;
-  bottom: 20px;
-  transform: translate(-50%, -50%);
-  margin: 0 auto;
+  top: 10px;
+  left: 435px;
 }
 
 </style>
@@ -107,6 +106,52 @@ hr {
   </div>
 </form>
 
+<%
+if (request.getParameter("recipe_name") != null) {
+    int recipe_id = 0;
+    String cuisine = request.getParameter("cuisine");
+    int cost = Integer.parseInt(request.getParameter("cost"));
+    int cooking_time = Integer.parseInt(request.getParameter("cooking_time"));
+    String ingredients = request.getParameter("ingredients");
+    String steps = request.getParameter("steps");
+
+    String db = "FeedMeUp";
+    String un = "root";
+    String pw = "root";
+
+    try {
+        java.sql.Connection con; 
+        Class.forName("com.mysql.jdbc.Driver");
+        con = DriverManager.getConnection("jdbc:mysql://localhost:3306/FeedMeUp?autoReconnect=true&useSSL=false", un, pw);
+
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM Recipes");
+
+        while (rs.next()) {
+            recipe_id = rs.getInt(1) + 1;
+        }
+
+        String query = String.format("INSERT INTO Recipes VALUES('%d', '%s', '%s', '%d', '%d', '%s')", recipe_id, cuisine, ingredients, cost, cooking_time, steps);
+        int rows = stmt.executeUpdate(query);
+
+        if (rows > 0) {
+            %> <div class="message"><p>Recipe Upload Successful</p></div> <%
+        }
+
+        else {
+            %> <div class="message"><p>Recipe Upload Unsuccessful</p></div> <%
+        }
+
+        stmt.close();
+        con.close();
+    }
+
+    catch(SQLException e) {
+        out.println("SQLException caught: " + e.getMessage());
+    }
+}
+
+%>
 
 </body>
 </html>
