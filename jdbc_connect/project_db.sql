@@ -61,3 +61,56 @@ INSERT INTO FeedMeUp.rates (user_id, video_id, score) VALUES (6,6,1);
 INSERT INTO FeedMeUp.rates (user_id, video_id, score) VALUES (7,7,3);
 INSERT INTO FeedMeUp.rates (user_id, video_id, score) VALUES (8,8,5);
 INSERT INTO FeedMeUp.rates (user_id, video_id, score) VALUES (9,9,2);
+
+CREATE TABLE FeedMeUp.Categories (category_id INT NOT NULL, category_name VARCHAR(15) NOT NULL UNIQUE, admin_id INT NOT NULL, PRIMARY KEY (category_id));
+
+INSERT INTO FeedMeUp.Categories (category_id, category_name, admin_id) VALUES (0, 'Vegetarian', 19);
+INSERT INTO FeedMeUp.Categories (category_id, category_name, admin_id) VALUES (1, 'Vegan', 18);
+INSERT INTO FeedMeUp.Categories (category_id, category_name, admin_id) VALUES (2, 'Meat', 10);
+INSERT INTO FeedMeUp.Categories (category_id, category_name, admin_id) VALUES (3, 'Dessert', 11);
+INSERT INTO FeedMeUp.Categories (category_id, category_name, admin_id) VALUES (4, 'Sauces', 13);
+INSERT INTO FeedMeUp.Categories (category_id, category_name, admin_id) VALUES (5, 'Soup', 14);
+INSERT INTO FeedMeUp.Categories (category_id, category_name, admin_id) VALUES (6, 'Drink', 18);
+INSERT INTO FeedMeUp.Categories (category_id, category_name, admin_id) VALUES (7, 'Snack', 15);
+INSERT INTO FeedMeUp.Categories (category_id, category_name, admin_id) VALUES (8, 'Seafood', 18);
+INSERT INTO FeedMeUp.Categories (category_id, category_name, admin_id) VALUES (9, 'Bread', 17);
+
+CREATE TABLE FeedMeUp.prefers (user_id INT NOT NULL, category_id INT NOT NULL, PRIMARY KEY (user_id, category_id));
+
+INSERT INTO FeedMeUp.prefers (user_id, category_id) VALUES (0, 0);
+INSERT INTO FeedMeUp.prefers (user_id, category_id) VALUES (0, 1);
+INSERT INTO FeedMeUp.prefers (user_id, category_id) VALUES (0, 4);
+INSERT INTO FeedMeUp.prefers (user_id, category_id) VALUES (3, 3);
+INSERT INTO FeedMeUp.prefers (user_id, category_id) VALUES (3, 9);
+INSERT INTO FeedMeUp.prefers (user_id, category_id) VALUES (5, 3);
+INSERT INTO FeedMeUp.prefers (user_id, category_id) VALUES (5, 7);
+INSERT INTO FeedMeUp.prefers (user_id, category_id) VALUES (8, 4);
+INSERT INTO FeedMeUp.prefers (user_id, category_id) VALUES (8, 3);
+INSERT INTO FeedMeUp.prefers (user_id, category_id) VALUES (8, 6);
+
+CREATE TABLE FeedMeUp.save (user_id INT NOT NULL, video_id INT NOT NULL, PRIMARY KEY (user_id, video_id));
+
+INSERT INTO FeedMeUp.save (user_id, video_id) VALUES (1, 1);
+INSERT INTO FeedMeUp.save (user_id, video_id) VALUES (1, 9);
+INSERT INTO FeedMeUp.save (user_id, video_id) VALUES (1, 6);
+INSERT INTO FeedMeUp.save (user_id, video_id) VALUES (4, 8);
+INSERT INTO FeedMeUp.save (user_id, video_id) VALUES (4, 3);
+INSERT INTO FeedMeUp.save (user_id, video_id) VALUES (4, 5);
+INSERT INTO FeedMeUp.save (user_id, video_id) VALUES (9, 4);
+INSERT INTO FeedMeUp.save (user_id, video_id) VALUES (9, 8);
+INSERT INTO FeedMeUp.save (user_id, video_id) VALUES (7, 3);
+INSERT INTO FeedMeUp.save (user_id, video_id) VALUES (7, 6);
+
+CREATE TABLE FeedMeUp.report (reporter_user_id INT NOT NULL, reported_user_id INT NOT NULL, PRIMARY KEY (reporter_user_id, reported_user_id));
+
+INSERT INTO FeedMeUp.report (reporter_user_id, reported_user_id) VALUES (3, 2);
+INSERT INTO FeedMeUp.report (reporter_user_id, reported_user_id) VALUES (3, 9);
+INSERT INTO FeedMeUp.report (reporter_user_id, reported_user_id) VALUES (5, 9);
+INSERT INTO FeedMeUp.report (reporter_user_id, reported_user_id) VALUES (4, 1);
+INSERT INTO FeedMeUp.report (reporter_user_id, reported_user_id) VALUES (6, 2);
+INSERT INTO FeedMeUp.report (reporter_user_id, reported_user_id) VALUES (7, 1);
+INSERT INTO FeedMeUp.report (reporter_user_id, reported_user_id) VALUES (6, 1);
+INSERT INTO FeedMeUp.report (reporter_user_id, reported_user_id) VALUES (8, 1);
+INSERT INTO FeedMeUp.report (reporter_user_id, reported_user_id) VALUES (4, 2);
+INSERT INTO FeedMeUp.report (reporter_user_id, reported_user_id) VALUES (5, 2);
+
