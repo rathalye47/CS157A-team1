@@ -10,3 +10,4 @@ Database Design and Implementation Project for CS 157A - Team 1.
   - Added recipe upload functionality.
   - Added admin functionality to choose a reported user for monitoring.
   - Added admin functionality to remove users that they monitor.
+  - Added admin functionality to add & delete food categories.
