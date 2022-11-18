@@ -28,17 +28,29 @@
         background-color: white;
       }
 
-      .add_button {
+      input[type=text] {
+        padding: 15px;
+        margin: 5px 0 22px 0;
+        display: inline-block;
+        border: none;
+        background: #f1f1f1;
+      }
+
+      input[type=text]:focus {
+        background-color: #ddd;
+        outline: none;
+      }
+
+      .add_button, .del_button {
         background-color: #04AA6D;
         color: white;
-        padding: 16px 20px;
+        padding: 8px 8px;
         margin: 8px ;
         border: none;
         cursor: pointer;
-     
       }
 
-      .add_button:hover {
+      .add_button:hover, .del_button:hover {
         opacity: 1;
       }
 
@@ -67,7 +79,7 @@
       }
 
       .active {
-        background-color: rgb(255, 80, 80);
+        background-color: #04AA6D;
       }
 
       .message {
@@ -94,7 +106,7 @@
     </ul>
     <div class="container">
       <h1>Existing Food Categories</h1>
-      <table style="width:50%">
+      <table style="width:50%; margin:auto;">
       <% 
       String db="FeedMeUp"; 
       String un="root"; 
@@ -113,14 +125,14 @@
             <td>
               <form action="admin_category.jsp" method="POST" style="padding-top: 5px">
                 <input type="hidden" name="category" value="<%=rs.getInt(1)%>" />
-                <input type="submit" name="del_submit" value="Delete" />
+                <input type="submit" name="del_submit" class="del_button" value="Delete" />
               </form>
           </tr>
       <% } %>
       </table>
       <h1>Add a New Category</h1>
       <form method = 'post' action="admin_category.jsp">
-        <table style='border:10px'>
+        <table style='margin:auto'>
           <tr>
             <td><input type="text" placeholder="Create New Category" name="new_category" id="new_category" required><br></td>
             <td><input type="submit" name="add_submit" class="add_button" value="Add Category" /></td>
