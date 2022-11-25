@@ -67,7 +67,7 @@
       <!-- USER PROFILE   -->
       <div class="container py-8 h-100">
         <div class="row d-flex justify-content-left align-items-center h-100">
-          <div class="col col-md-9 col-lg-7 col-xl-5">
+          <div class="col col-md-9 col-lg-7 col-xl-6">
             <div class="card" style="border-radius: 15px;">
               <div class="card-body p-2">
                 <div class="d-flex text-black">
@@ -104,6 +104,28 @@
         </div>
       </div>
 
+      <!-- VIDEOS LIST -->
+      <div class="videos-list">
+        
+        <div class="card m-md-4">
+          <iframe height="315" src="https://www.youtube.com/embed/uQXmWHFjYJI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+
+        
+        <div class="card m-md-4">
+          <iframe height="315" src="https://www.youtube.com/embed/uQXmWHFjYJI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+      </div>
 
 
 
