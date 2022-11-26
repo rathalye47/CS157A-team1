@@ -8,7 +8,7 @@
                //or root
                String db = "feedmeup";
               Class.forName("com.mysql.cj.jdbc.Driver");
-               Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + db,"root","741456963");
+               Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + db,"root","root");
                out.println (db+ " database successfully opened.");
                Statement stmt=con.createStatement();
                ResultSet rs=stmt.executeQuery("select * from feedmeup.recipes");

@@ -1,3 +1,6 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*" %>
+<%@ page import="java.util.*" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,6 +21,27 @@
   <link rel="icon" sizes="16x16" href="favicon.ico">
 </head>
 
+<%
+           try {
+              String usn=(String)session.getAttribute("username"); 
+              int idTest = (int)session.getAttribute("ID");
+              out.println("<br>" +"GOT USERNAME FROM LOGIN: " + usn + " " + Integer.toString(idTest));
+
+               String db = "feedmeup";
+              Class.forName("com.mysql.cj.jdbc.Driver");
+               Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + db,"root","root");
+               out.println (db+ " database successfully opened.");
+               Statement stmt=con.createStatement();
+               ResultSet rs=stmt.executeQuery("select * from feedmeup.recipes");
+               while(rs.next()){
+                out.println("<br>" + rs.getInt(1)+" "+rs.getString(2)+" "+rs.getString(3));
+              }
+               con.close();
+               }
+               catch (SQLException e) {
+               out.println("SQLException caught: "+e.getMessage());
+           }
+%> 
 <body>
   <div class="wrapper">
 
@@ -76,7 +100,11 @@
                       alt="Generic placeholder image" class="img-fluid" style="width: 180px; border-radius: 10px;">
                   </div>
                   <div class="flex-grow-1 ms-3">
-                    <h5 class="mb-1">Mcfoody Mclover</h5>
+                    <h5 class="mb-1">
+                    
+                    <%=(String)session.getAttribute("username")%>
+                    
+                    </h5>
                     <p class="mb-2 pb-1" style="color: #2b2a2a;">Food Enthusiast</p>
                     <div class="d-flex justify-content-start rounded-3 p-2 mb-2" style="background-color: #efefef;">
                       <div>
@@ -173,7 +201,7 @@
   <!-- Plugin for Headrom, full documentation here: https://wicky.nillia.ms/headroom.js/ -->
   <script src="js/plugins/headroom.min.js"></script>
   <!-- Control Center for Argon UI Kit: parallax effects, scripts for the example pages etc -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE" type="text/javascript"></script>
+  <%-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE" type="text/javascript"></script> --%>
   <script src="js/argon-design-system.min.js?v=1.0.2" type="text/javascript"></script>
   <script>
     function argonScripts() {
@@ -206,6 +234,7 @@
     }
     argonScripts();
   </script>
+  
 </body>
 
 </html>

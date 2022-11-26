@@ -95,11 +95,15 @@
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/FeedMeUp?autoReconnect=true&useSSL=false", un, pw);
             Statement stmt = con.createStatement();
-            String query = String.format("SELECT username, passw FROM Users WHERE username = '%s' AND passw = SHA('%s')", username, password);
+            String query = String.format("SELECT username, password FROM Users WHERE username = '%s' AND password = SHA('%s')", username, password);
             ResultSet rs = stmt.executeQuery(query);
             status=rs.next();
             if(status == true) { 
                 %> <div class="message"><p>Login Successful</p></div> <% 
+                  session.setAttribute("username", username);
+                  session.setAttribute("ID", 1111111);
+                  response.sendRedirect("http://localhost:8080/public/videos.jsp");
+
             } else { 
                 %> <div class="message"><p>Login Unsuccessful</p></div> <% 
             }

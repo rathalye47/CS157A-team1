@@ -6,7 +6,7 @@ CREATE TABLE Users (user_id INT NOT NULL, username VARCHAR(45) NOT NULL UNIQUE, 
 ​
 INSERT INTO Users (user_id, username, password) VALUES (0,'jon_robbins',SHA('Gr3meg%*@xl'));
 INSERT INTO Users (user_id, username, password) VALUES (1,'sandy.williams',SHA('ks8(#HD[;:932pwq'));
-INSERT INTO Users (user_id, username, password) VALUES (2,'cgarcia',SHA('30-DFbr/?\'@88'));
+INSERT INTO Users (user_id, username, password) VALUES (2,'cgarcia',SHA('30-DFbr/?\'@88''));
 INSERT INTO Users (user_id, username, password) VALUES (3,'anthony-tran',SHA('CF1083dfmodRK'));
 INSERT INTO Users (user_id, username, password) VALUES (4,'rishis',SHA('$*%739JJFnr;;nvspW'));
 INSERT INTO Users (user_id, username, password) VALUES (5,'elizabeth.smith',SHA('fuenls49-<~&$VDrp'));

@@ -102,7 +102,7 @@ if (request.getParameter("username") != null) {
 
   try {
     java.sql.Connection con; 
-    Class.forName("com.mysql.jdbc.Driver");
+    Class.forName("com.mysql.cj.jdbc.Driver");
     con = DriverManager.getConnection("jdbc:mysql://localhost:3306/FeedMeUp?autoReconnect=true&useSSL=false", un, pw);
 
     Statement stmt = con.createStatement();
@@ -114,6 +114,7 @@ if (request.getParameter("username") != null) {
     int rows = stmt.executeUpdate(query);
     if(rows != 0) { 
         %> <div class="message"><p>Registration Successful</p></div> <% 
+        response.sendRedirect("http://localhost:8080/public/videos.jsp");
     } else { 
         %> <div class="message"><p>Registration Unsuccessful</p></div> <% 
     }
