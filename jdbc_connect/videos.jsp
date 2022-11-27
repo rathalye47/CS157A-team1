@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*" %>
-<%@ page import="java.util.*" %>
+<%@ page import="java.io.*" %>
+<%@ page import="java.nio.file.*" %>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -111,7 +113,52 @@
             </div>
           </div>
         </div>
+              <%-- ADD VIDEO HERE --%>
+      <form method = 'post' action="videos.jsp" enctype = "multipart/form-data>
+      <label for="formFileMultiple" class="form-label">Multiple files input example</label>
+      <input class="form-control" name="uploadVideo" type="file" id="formFileMultiple" multiple />
+      <button type="submit" class="btn btn-dark">Upload</button>
+      </form>
       </div>
+
+      <%
+      if(request.getParameter("uploadVideo") != null){
+        String videoTitle = request.getParameter("uploadVideo");
+
+        String fromFile = File.separator + "Users" + File.separator + "supernova" + File.separator + "Downloads" + File.separator + videoTitle;
+
+String toFile = File.separator + "Users" + File.separator + "supernova" + File.separator + "Documents" + File.separator + "Coding" + File.separator + "All Classes" + File.separator + "CS157A" + File.separator + "apache-tomcat-10.0.23" + File.separator + "webapps" + File.separator + "ROOT" + File.separator + "public" + File.separator + "videos" + File.separator + videoTitle;
+
+        
+
+        Path source = Paths.get(fromFile);
+        Path target = Paths.get(toFile);
+
+        try {            
+            // if target exists, replace it.
+            Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+
+            Class.forName("com.mysql.cj.jdbc.Driver");          
+            int user_id = (int)session.getAttribute("user_id");
+            String db = "feedmeup";  
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + db,"root","root");
+            Statement stmt=con.createStatement();
+            int userid = (int)session.getAttribute("user_id");
+            String statement2 = "INSERT INTO feedmeup.Videos (video_id, title, file_path, duration, views, video_resolution, language, user_id) VALUES (null,'Banana Soup with Cold Noodle'," + "'"+ videoTitle + "','1:15', '12343', '1080p', 'EN'," + Integer.toString(userid) + ")";
+            stmt.executeUpdate(statement2);
+            out.println("<br>" + "File uploaded to database successful !");
+
+        } catch (IOException e) {
+          e.printStackTrace();
+        } catch(SQLException e) {
+          out.println("SQLException caught: " + e.getMessage());
+        }
+      }
+
+      
+
+
+      %>
 
       <!-- VIDEOS LIST -->
       <div class="videos-list">
@@ -138,7 +185,8 @@
                 %>
 
                 <div class="card m-md-4">
-                  <iframe height="315" width="400" src="https://www.youtube.com/embed/uQXmWHFjYJI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                 <video id="myVideo" width="420" height="345" controls="controls">
+                <source src="videos/Short Rib Ragu shorts1080p.mp4" type="video/mp4" /> </video>
                   <div class="card-body">
                     <h5 class="card-title"><%=title %></h5>
                     <p class="card-text"><%=viewCount %> views</p>
@@ -146,6 +194,7 @@
                   </div>
                 </div>
 
+                
                 <%
                 } while (rs.next());
                   }
@@ -158,7 +207,7 @@
 
       </div>
 
-  
+
       <div class="page-header">
         <div class="page-header-image" style="background-image: url('https://i.ibb.co/pxhhXKr/Meat-Screegrab.png')">
         </div>
