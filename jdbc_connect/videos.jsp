@@ -20,28 +20,9 @@
   <link rel="stylesheet" href="css/creativetim/creativetim.min.css">
   <link rel="icon" sizes="16x16" href="favicon.ico">
 </head>
+  
+  
 
-<%
-           try {
-              String usn=(String)session.getAttribute("username"); 
-              int idTest = (int)session.getAttribute("ID");
-              out.println("<br>" +"GOT USERNAME FROM LOGIN: " + usn + " " + Integer.toString(idTest));
-
-               String db = "feedmeup";
-              Class.forName("com.mysql.cj.jdbc.Driver");
-               Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + db,"root","root");
-               out.println (db+ " database successfully opened.");
-               Statement stmt=con.createStatement();
-               ResultSet rs=stmt.executeQuery("select * from feedmeup.recipes");
-               while(rs.next()){
-                out.println("<br>" + rs.getInt(1)+" "+rs.getString(2)+" "+rs.getString(3));
-              }
-               con.close();
-               }
-               catch (SQLException e) {
-               out.println("SQLException caught: "+e.getMessage());
-           }
-%> 
 <body>
   <div class="wrapper">
 
@@ -87,7 +68,7 @@
         </div>
       </nav>
 
-
+      
       <!-- USER PROFILE   -->
       <div class="container py-8 h-100">
         <div class="row d-flex justify-content-left align-items-center h-100">
@@ -134,30 +115,50 @@
 
       <!-- VIDEOS LIST -->
       <div class="videos-list">
-        
-        <div class="card m-md-4">
-          <iframe height="315" src="https://www.youtube.com/embed/uQXmWHFjYJI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div>
+        <%-- Fetching videos based on user_id --%>
+<%
+           try {
+            Class.forName("com.mysql.cj.jdbc.Driver");          
+            int user_id = (int)session.getAttribute("user_id");
+            String db = "feedmeup";  
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + db,"root","root");
+            Statement stmt=con.createStatement();
+            String statement1 = "SELECT * FROM Videos WHERE user_id = " + user_id;
+            ResultSet rs=stmt.executeQuery(statement1);
+                            
+              if(rs.next() == false){
+                out.println("<br>" + "Your channel is empty!");
+              }
+              else{
+                do {
+                String title = rs.getString("title");
+                int viewCount = rs.getInt(5);
+                
 
-        
-        <div class="card m-md-4">
-          <iframe height="315" src="https://www.youtube.com/embed/uQXmWHFjYJI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          <div class="card-body">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div>
+                %>
+
+                <div class="card m-md-4">
+                  <iframe height="315" width="400" src="https://www.youtube.com/embed/uQXmWHFjYJI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                  <div class="card-body">
+                    <h5 class="card-title"><%=title %></h5>
+                    <p class="card-text"><%=viewCount %> views</p>
+                    <a href="#" class="btn btn-primary">Like</a>
+                  </div>
+                </div>
+
+                <%
+                } while (rs.next());
+                  }
+              con.close();
+              }
+               catch (SQLException e) {
+               out.println("SQLException caught: "+e.getMessage());
+              }
+%> 
+
       </div>
 
-
-
-
+  
       <div class="page-header">
         <div class="page-header-image" style="background-image: url('https://i.ibb.co/pxhhXKr/Meat-Screegrab.png')">
         </div>
