@@ -133,15 +133,17 @@
                                 out.println("Unable to query popular videos");
                               }
                               else{
+                                
+                          
                                  %><div class="videos-list"> <%
                                 do {
                                     String title = rs.getString("title");
                                     int viewCount = rs.getInt(5);
-                                    
+                                    String videoPath = "videos/" + rs.getString("file_path");
                                     %>
                                     <div class="card m-md-4">
                                                     <video id="myVideo" width="420" height="345" controls="controls">
-                                    <source src="videos/Short Rib Ragu shorts1080p.mp4" type="video/mp4" /> </video>
+                                    <source src="<%=videoPath%>" type="video/mp4" /> </video>
                                       <div class="card-body">
                                         <h5 class="card-title"><%=title %></h5>
                                         <p class="card-text"><%=viewCount %> views</p>
