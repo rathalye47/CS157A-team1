@@ -102,7 +102,7 @@
                 %> <div class="message"><p>Login Successful</p></div> <% 
                   session.setAttribute("username", username);
                   session.setAttribute("user_id",rs.getInt(3));
-                  response.sendRedirect("http://localhost:8080/public/videos.jsp");
+                  response.sendRedirect("http://localhost:8080/public/index.jsp");
 
             } else { 
                 %> <div class="message"><p>Login Unsuccessful</p></div> <% 

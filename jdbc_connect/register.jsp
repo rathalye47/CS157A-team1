@@ -114,7 +114,7 @@ if (request.getParameter("username") != null) {
     int rows = stmt.executeUpdate(query);
     if(rows != 0) { 
         %> <div class="message"><p>Registration Successful</p></div> <% 
-        response.sendRedirect("http://localhost:8080/public/videos.jsp");
+        response.sendRedirect("http://localhost:8080/public/index.jsp");
     } else { 
         %> <div class="message"><p>Registration Unsuccessful</p></div> <% 
     }

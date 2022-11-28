@@ -2,7 +2,7 @@
 <%@ page import="java.sql.*" %>
 <%@ page import="java.io.*" %>
 <%@ page import="java.nio.file.*" %>
-
+<%@ page import="java.util.Random"%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -135,16 +135,21 @@ String toFile = File.separator + "Users" + File.separator + "supernova" + File.s
         Path target = Paths.get(toFile);
 
         try {            
-            // if target exists, replace it.
+            
             Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
-
+            
             Class.forName("com.mysql.cj.jdbc.Driver");          
             int user_id = (int)session.getAttribute("user_id");
             String db = "feedmeup";  
             Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + db,"root","root");
             Statement stmt=con.createStatement();
             int userid = (int)session.getAttribute("user_id");
-            String statement2 = "INSERT INTO feedmeup.Videos (video_id, title, file_path, duration, views, video_resolution, language, user_id) VALUES (null,'Banana Soup with Cold Noodle'," + "'"+ videoTitle + "','1:15', '12343', '1080p', 'EN'," + Integer.toString(userid) + ")";
+            int random_int = (int)Math.floor(Math.random()*(2000000-500+1)+500);
+
+
+
+
+            String statement2 = "INSERT INTO feedmeup.Videos (video_id, title, file_path, duration, views, video_resolution, language, user_id) VALUES (null,'Banana Soup with Cold Noodle'," + "'"+ videoTitle + "','1:15', "+ Integer.toString(random_int) +", '1080p', 'EN'," + Integer.toString(userid) + ")";
             stmt.executeUpdate(statement2);
             out.println("<br>" + "File uploaded to database successful !");
 
@@ -180,13 +185,12 @@ String toFile = File.separator + "Users" + File.separator + "supernova" + File.s
                 do {
                 String title = rs.getString("title");
                 int viewCount = rs.getInt(5);
-                
-
+                String videoPath = "videos/" + rs.getString("file_path");
                 %>
 
                 <div class="card m-md-4">
                                  <video id="myVideo" width="420" height="345" controls="controls">
-                <source src="videos/Short Rib Ragu shorts1080p.mp4" type="video/mp4" /> </video>
+                <source src="<%=videoPath%>" type="video/mp4" /> </video>
                   <div class="card-body">
                     <h5 class="card-title"><%=title %></h5>
                     <p class="card-text"><%=viewCount %> views</p>

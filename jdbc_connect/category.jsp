@@ -95,75 +95,37 @@
           height: 100vh;
         ">
                 <div class="col-md-8 mx-auto text-center">
-                  <h2 class="display-2">BBQ IS LIFE</h2>
+                  <h2 class="display-2"><%= session.getAttribute("chosenCategory") %></h2>
+
+                    <form class="form-inline" method='post' action="index.jsp">
+                  <button class="btn btn-outline-success" type="submit" name="categoryButton" id="categoryButtonID">Go Back</button>
+
                 </div>
               </div>
 
-              <!-- CATEGORIES NAVIGATION BAR -->
-
-              <nav class="navbar navbar-light bg-light">
-                <form class="form-inline" method='post' action="index.jsp">
-                  <button class="btn btn-outline-success" type="submit" name="popularButton" id="popularButtonID">Popular</button>
-
-                  <%
-                  int userid=(int)session.getAttribute("user_id"); 
-                  Class.forName("com.mysql.cj.jdbc.Driver");
-                  try{
-                        String db="feedmeup" ; 
-                        
-                        Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/" +
-                        db,"root","root"); 
-                        Statement stmt=con.createStatement(); 
-                        String statement2= "SELECT category_name FROM Categories INNER JOIN Videos ON Categories.category_id=Videos.category_id GROUP BY category_name;";
-                        ResultSet rs=stmt.executeQuery(statement2); 
-
-                              if(rs.next() == false){
-                                out.println("Query returns empty tuples!");
-                              }
-                              else{
-                                do {
-                                String category_name = rs.getString("category_name");
-                                session.setAttribute("chosenCategory",category_name);
-                                 %>
-    
-                                <a class="btn btn-outline-primary" href="http://localhost:8080/public/category.jsp" role="button"><%=category_name%></a>
-                      
-                                 <%                                               
-                                    } while (rs.next());
-
-
-                                 %> </div> <%
-                              }
-
-
-                    } catch(Exception e) {
-                          out.println(e);
-                      }
-                  %>
+              <%
+              if(request.getParameter("popularButton") !=null){ 
+                session.setAttribute("chosenCategory","");
+                response.sendRedirect("http://localhost:8080/public/index.jsp");
+              }
+              %>
 
 
 
 
-                  <button class="btn btn-sm btn-outline-secondary" type="submit" name="asianCuisineButton">Asian
-                    Cuisine</button>
-                </form>
-              </nav>
-
-              <%-- <script>
-                document.addEventListener("DOMContentLoaded", function(event) { 
-                  document.getElementById("popularButtonID").click();
-              });
-              </script> --%>
+                <%-- DISPLAY CHOSEN CATEGORY VIDEO --%>
               <% 
-                if(request.getParameter("popularButton") !=null){ 
+                    int userid=(int)session.getAttribute("user_id"); 
+                    Class.forName("com.mysql.cj.jdbc.Driver");
                   try{
                         String db="feedmeup" ; 
                         
                         Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/" +
                         db,"root","root"); 
                         Statement stmt=con.createStatement(); 
-                        String statement1= "SELECT * FROM Videos WHERE user_id <> " + Integer.toString(userid) + " ORDER BY views DESC"; 
-                        ResultSet rs=stmt.executeQuery(statement1); 
+                        String statement3= "SELECT *  FROM Videos  INNER JOIN Categories  ON Videos.category_id=Categories.category_id  WHERE Categories.category_name= '" + session.getAttribute("chosenCategory") + "'  AND Videos.user_id!="+userid+";"; 
+
+                        ResultSet rs=stmt.executeQuery(statement3); 
 
                               if(rs.next() == false){
                                 out.println("Unable to query popular videos");
@@ -192,12 +154,7 @@
                     } catch(Exception e) {
                           out.println(e);
                       }
-
-                
-                }
-                if(request.getParameter("asianCuisineButton") !=null){ out.println("Asian cuisine button"); } 
                 %>
-
 
 
 
