@@ -123,6 +123,7 @@
 
       <%
       if(request.getParameter("uploadVideo") != null){
+        String videoTitle = request.getParameter("uploadVideo");
         String fromFile = File.separator + "Users" + File.separator + "supernova" + File.separator + "Downloads" + File.separator + videoTitle;
         String toFile = File.separator + "Users" + File.separator + "supernova" + File.separator + "Documents" + File.separator + "Coding" + File.separator + "All Classes" + File.separator + "CS157A" + File.separator + "apache-tomcat-10.0.23" + File.separator + "webapps" + File.separator + "ROOT" + File.separator + "public" + File.separator + "videos" + File.separator + videoTitle;
 
