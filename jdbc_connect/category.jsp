@@ -106,7 +106,7 @@
               <%
               if(request.getParameter("popularButton") !=null){ 
                 session.setAttribute("chosenCategory","");
-                response.sendRedirect("http://localhost:8080/public/index.jsp");
+                response.sendRedirect("index.jsp");
               }
               %>
 
