@@ -126,7 +126,7 @@
                                 session.setAttribute("chosenCategory",category_name);
                                  %>
     
-                                <a class="btn btn-outline-primary" href="http://localhost:8080/public/category.jsp" role="button"><%=category_name%></a>
+                                <a class="btn btn-outline-primary" href="category.jsp" role="button"><%=category_name%></a>
                       
                                  <%                                               
                                     } while (rs.next());
