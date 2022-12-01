@@ -112,13 +112,13 @@ if ((request.getParameter("username")) != null && (request.getParameter("passwor
     ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM Users");
 
     while (rs.next()) {
-    	user_id = rs.getInt(1) + 1;
+      user_id = rs.getInt(1) + 1;
     }
 
     String query = String.format("INSERT INTO Users VALUES('%d', '%s', SHA('%s'))", user_id, username, password);
     int rows = stmt.executeUpdate(query);
 
-    String query2 = String.format("INSERT INTO general_users (user_id, creation_date) VALUES('%d', '2022-12-01')", user_id);
+    String query2 = String.format("INSERT INTO general_users (user_id, creation_date) VALUES('%d', '%s')", user_id, new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date()));
     int rows2 = stmt.executeUpdate(query2);
 
     if((rows != 0) && (rows2 != 0)) { 
@@ -154,7 +154,7 @@ else if ((request.getParameter("username")) != null && (request.getParameter("pa
     ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM Users");
 
     while (rs.next()) {
-    	user_id = rs.getInt(1) + 1;
+      user_id = rs.getInt(1) + 1;
     }
 
     String query = String.format("INSERT INTO Users VALUES('%d', '%s', SHA('%s'))", user_id, username, password);

@@ -29,7 +29,7 @@
         background-color: white;
       }
 
-      .mon_button {
+      .remove_button {
         background-color: #04AA6D;
         color: white;
         padding: 8px 8px;
@@ -38,7 +38,7 @@
         cursor: pointer;
       }
 
-      .mon_button:hover {
+      .remove_button:hover {
         opacity: 10;
       }
 
@@ -66,8 +66,26 @@
         background-color: #111;
       }
 
+      .back_button {
+        background-color: #04AA6D;
+        color: white;
+        padding: 8px 8px;
+        margin: 8px ;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+      }
+
       .active {
         background-color: #04AA6D;
+      }
+
+      .message {
+        position: fixed;
+        left: 50%;
+        bottom: 20px;
+        transform: translate(-50%, -50%);
+        margin: 0 auto;
       }
 
       .name:disabled {
@@ -79,18 +97,20 @@
 
   <body>
     <ul>
-      <li><a class="active" href="admin_home.jsp">Home</a></li>
-      <li><a href="admin_users.jsp">Users</a></li>
+      <li><a href="admin_home.jsp">Home</a></li>
+      <li><a class="active" href="admin_users.jsp">Users</a></li>
       <li><a href="admin_category.jsp">Categories</a></li>
       <li style="float:right"><a href="login.jsp">Log out</a></li>
     </ul>
     <div class="container">
-      <h1>Un-Monitored <br> Reported Users</h1>
+      <a href="admin_users.jsp" class="back_button">< Back</a>
+      <h1>User Videos</h1>
 
       <table style="width:50%; margin:auto;">
       <% 
       int admin_id=(int)session.getAttribute("admin_id"); 
       String db="FeedMeUp"; 
+      int user=(int)session.getAttribute("user"); 
       String un="root"; 
       String pw="root"; 
       try { 
@@ -98,14 +118,30 @@
         Class.forName("com.mysql.jdbc.Driver");
         con=DriverManager.getConnection("jdbc:mysql://localhost:3306/FeedMeUp?autoReconnect=true&useSSL=false", un, pw); 
         Statement stmt=con.createStatement(); 
-        ResultSet rs=stmt.executeQuery("SELECT DISTINCT reported_user_id, username FROM report JOIN (Users NATURAL JOIN General_Users) ON reported_user_id=user_id WHERE checked_by IS NULL"); 
+        String query = String.format("SELECT * FROM Videos WHERE user_id=%d", user); 
+        ResultSet rs=stmt.executeQuery(query);
+        // create link to direct to users videos to check
         while (rs.next()) { %>
           <tr>
-            <td><input type='text' class='name' style='border: 0' value='<%=rs.getString(2)%>' disabled/></td>
             <td>
-              <form action="admin_home.jsp" method="POST" style="padding-top: 5px">
-                <input type="hidden" name="user" value="<%=rs.getInt(1)%>" />
-                <input type="submit" name="submit" class="mon_button" value="Monitor" />
+              <div class="videos-list"><%
+                String title = rs.getString("title");
+                int viewCount = rs.getInt(5);
+                String videoPath = "videos/" + rs.getString("file_path");
+                %>
+                <div class="card m-md-4">
+                  <video id="myVideo" width="420" height="345" controls="controls">
+                  <source src="<%=videoPath%>" type="video/mp4" /> </video>
+                  <div class="card-body">
+                    <h5 class="card-title"><%=title %></h5>
+                    <p class="card-text"><%=viewCount %> views</p>
+                  </div>
+              </div>
+            </td>
+            <td>
+              <form action="admin_user_info.jsp" method="POST" style="padding-top: 5px">
+                <input type="hidden" name="video" value="<%=rs.getInt(1)%>" />
+                <input type="submit" name="submit" class="remove_button" value="Remove" />
               </form>
           </tr>
       <% } %>
@@ -113,17 +149,14 @@
       <% 
         rs.close(); 
         String x=request.getParameter("submit"); 
-        if(x!=null && x.equals("Monitor")) { 
-          int user_id=Integer.parseInt(request.getParameter("user")); 
-          String query=String.format("UPDATE General_Users SET checked_by=%d WHERE user_id=%d", admin_id, user_id); 
-          int rows=stmt.executeUpdate(query); 
-          if(rows !=0) { 
-            response.sendRedirect("admin_home.jsp");
-          } else { %>
-            <script type="text/javascript">
-              alert("Unable to update monitor admin");
-            </script>
-          <% }
+        if(x!=null && x.equals("Remove")) { 
+          int video_id=Integer.parseInt(request.getParameter("video")); 
+          String query1=String.format("DELETE FROM Videos WHERE video_id=%d", video_id);  
+          int rows=stmt.executeUpdate(query1); 
+          // refresh the page here
+          if(rows !=0) {
+            response.sendRedirect("admin_user_info.jsp");
+          }
         } 
         stmt.close(); 
         con.close(); 

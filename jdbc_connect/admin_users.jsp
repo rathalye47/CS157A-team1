@@ -70,14 +70,6 @@
         background-color: #04AA6D;
       }
 
-      .message {
-        position: fixed;
-        left: 50%;
-        bottom: 20px;
-        transform: translate(-50%, -50%);
-        margin: 0 auto;
-      }
-
       .name:disabled {
         background: white;
         color: black;
@@ -97,6 +89,7 @@
 
       <table style="width:50%; margin:auto;">
       <% 
+      int admin_id=(int)session.getAttribute("admin_id"); 
       String db="FeedMeUp"; 
       String un="root"; 
       String pw="root"; 
@@ -104,14 +97,18 @@
         java.sql.Connection con;
         Class.forName("com.mysql.jdbc.Driver");
         con=DriverManager.getConnection("jdbc:mysql://localhost:3306/FeedMeUp?autoReconnect=true&useSSL=false", un, pw); 
-        int admin_id = 10; // eventually change this to admin user session_id
         Statement stmt=con.createStatement(); 
-        String query = String.format("SELECT General_Users.user_id, username FROM General_Users JOIN Users ON General_Users.user_id=Users.user_id WHERE checked_by = %d", admin_id); 
+        String query = String.format("SELECT General_Users.user_id, username FROM General_Users NATURAL JOIN Users WHERE checked_by = %d", admin_id); 
         ResultSet rs=stmt.executeQuery(query);
         // create link to direct to users videos to check
         while (rs.next()) { %>
           <tr>
-            <td><input type='text' class='name' style='border: 0' value='<%=rs.getString(2)%>' disabled/></td>
+            <td>
+              <a href="admin_user_info.jsp">
+                <input type='text' class='name' style='border: 0' value='<%=rs.getString(2)%>' disabled/>
+                <%session.setAttribute("user", rs.getInt(1));%>
+              </a>
+            </td>
             <td>
               <form action="admin_users.jsp" method="POST" style="padding-top: 5px">
                 <input type="hidden" name="user" value="<%=rs.getInt(1)%>" />
@@ -130,14 +127,12 @@
           int rows=stmt.executeUpdate(query1); 
           int rows1=stmt.executeUpdate(query2); 
           // refresh the page here
-          if(rows !=0 && rows1 !=0) { %>
-            <div class="message">
-              <p>Removed general user</p>
-            </div>
-          <% } else { %>
-            <div class="message">
-              <p>Couldn't remove general user</p>
-            </div>
+          if(rows !=0 && rows1 !=0) {
+            response.sendRedirect("admin_users.jsp");
+          } else { %>
+            <script type="text/javascript">
+              alert("Couldn't remove general user");
+            </script>
           <% } 
         } 
         stmt.close(); 

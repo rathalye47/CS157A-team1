@@ -82,14 +82,6 @@
         background-color: #04AA6D;
       }
 
-      .message {
-        position: fixed;
-        left: 50%;
-        bottom: 20px;
-        transform: translate(-50%, -50%);
-        margin: 0 auto;
-      }
-
       .name:disabled {
         background: white;
         color: black;
@@ -105,9 +97,19 @@
       <li style="float:right"><a href="login.jsp">Log out</a></li>
     </ul>
     <div class="container">
+      <h1>Add a New Category</h1>
+      <form method = 'post' action="admin_category.jsp">
+        <table style='margin:auto'>
+          <tr>
+            <td><input type="text" placeholder="Create New Category" name="new_category" id="new_category" required><br></td>
+            <td><input type="submit" name="add_submit" class="add_button" value="Add Category" /></td>
+          </tr>
+        </table>
+      </form>
       <h1>Existing Food Categories</h1>
       <table style="width:50%; margin:auto;">
       <% 
+      int admin_id=(int)session.getAttribute("admin_id"); 
       String db="FeedMeUp"; 
       String un="root"; 
       String pw="root"; 
@@ -115,7 +117,6 @@
         java.sql.Connection con;
         Class.forName("com.mysql.jdbc.Driver");
         con=DriverManager.getConnection("jdbc:mysql://localhost:3306/FeedMeUp?autoReconnect=true&useSSL=false", un, pw); 
-        int admin_id = 10; // eventually change this to admin user session_id
         Statement stmt=con.createStatement(); 
         ResultSet rs=stmt.executeQuery("SELECT category_id, category_name FROM Categories");
         // create link to direct to users videos to check
@@ -130,16 +131,6 @@
           </tr>
       <% } %>
       </table>
-      <h1>Add a New Category</h1>
-      <form method = 'post' action="admin_category.jsp">
-        <table style='margin:auto'>
-          <tr>
-            <td><input type="text" placeholder="Create New Category" name="new_category" id="new_category" required><br></td>
-            <td><input type="submit" name="add_submit" class="add_button" value="Add Category" /></td>
-          </tr>
-        </table>
-      </form>
-
       <% 
         rs.close(); 
         String x=request.getParameter("del_submit"); 
@@ -148,14 +139,12 @@
           String query=String.format("DELETE FROM Categories WHERE category_id=%d", cat_id); 
           int rows=stmt.executeUpdate(query); 
           // refresh the page here
-          if(rows !=0) { %>
-            <div class="message">
-              <p>Deleted category</p>
-            </div>
-          <% } else { %>
-            <div class="message">
-              <p>Couldn't delete category</p>
-            </div>
+          if(rows !=0) { 
+            response.sendRedirect("admin_category.jsp"); 
+          } else { %>
+            <script type="text/javascript">
+                alert("Couldn't Delete Category");
+            </script>
           <% } 
         } 
 
@@ -167,7 +156,10 @@
           ResultSet rs0 = stmt.executeQuery(query0);
           boolean status=rs0.next();
           if(status == true) { 
-              %> <div class="message"><p>Duplicate Category</p></div> <% 
+              %> <script type="text/javascript">
+                  alert("Duplicate Category");
+                </script> 
+              <% 
           } else {
             ResultSet rs1 = stmt.executeQuery("SELECT COUNT(*) FROM Categories");
             while (rs1.next()) {
@@ -176,9 +168,13 @@
             String query1 = String.format("INSERT INTO Categories VALUES('%d', '%s', '%d')", category_id, cat, admin_id);
             int rows1 = stmt.executeUpdate(query1);
             if(rows1 != 0) { 
-                %> <div class="message"><p>Addition Successful</p></div> <% 
+              response.sendRedirect("admin_category.jsp");
             } else { 
-                %> <div class="message"><p>Addition Unsuccessful</p></div> <% 
+              %>
+                <script type="text/javascript">
+                  alert("Addition Unsuccessful");
+                </script>
+              <%
             }
           }
         } 
