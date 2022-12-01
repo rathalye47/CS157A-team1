@@ -11,8 +11,7 @@
               font-size: 2.75rem;
               font-weight: 600;
               line-height: 1.5; 
-              color: black !important;
-              background-color: #27498a;
+              background-color: black;
             }
           </style>
 
@@ -30,7 +29,7 @@
 
               <div class="bg-image d-flex justify-content-center align-items-center" style="
           background-image: url('https://i.ibb.co/dWghRff/HeroAlt3.jpg');
-          height: 100vh;
+          height: 80vh;
         ">
                 <div class="col-md-8 mx-auto text-center">
                   <h2 class="landing">WELCOME</h2>
@@ -81,7 +80,6 @@
                     Statement stmt=con.createStatement(); 
                     String statement1= "SELECT * FROM Videos WHERE user_id <> " + Integer.toString(userid) + " ORDER BY views DESC"; 
                     ResultSet rs=stmt.executeQuery(statement1); 
-
                     if(rs.next() == false){
                       out.println("Unable to query popular videos");
                     }
@@ -92,7 +90,7 @@
                           int viewCount = rs.getInt(5);
                           String videoPath = "videos/" + rs.getString("file_path");
                           %>
-                          <div class="card m-md-4">
+                          <div class="card m-md-4" style='background-color: black;'>
                               <video id="myVideo" width="420" height="345" controls="controls">
                           <source src="<%=videoPath%>" type="video/mp4" /> </video>
                             <div class="card-body">
