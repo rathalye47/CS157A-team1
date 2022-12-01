@@ -22,10 +22,10 @@ h1 {
 .container {
   padding: 25px;
   width: 500px;
-  height: 500px;
+  height: 525px;
   margin: auto;
   top: 50%;
-  transform: translate(0, 22.5%);
+  transform: translate(0, 15%);
   background-color: white;
 }
 
@@ -83,7 +83,10 @@ hr {
     <input type="text" placeholder="Create Username" name="username" id="username" required><br>
 
     <label for="password"><b>Password</b></label><br>
-    <input type="password" placeholder="Create Password" name="password" id="password" required>
+    <input type="password" placeholder="Create Password" name="password" id="password" required><br>
+
+    <input type="checkbox" id="user_role" name="user_role" value="user_role">
+    <label for="user_role"> I am an admin</label><br><br>
 
     <hr style="text-align:left;margin-left:0">
 
@@ -92,7 +95,7 @@ hr {
 </form>
 
 <%
-if (request.getParameter("username") != null) {
+if ((request.getParameter("username")) != null && (request.getParameter("password") != null) && (request.getParameter("user_role") == null)) {
   int user_id = 0;
   String username = request.getParameter("username");
   String password = request.getParameter("password");
@@ -107,17 +110,66 @@ if (request.getParameter("username") != null) {
 
     Statement stmt = con.createStatement();
     ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM Users");
+
     while (rs.next()) {
     	user_id = rs.getInt(1) + 1;
     }
+
     String query = String.format("INSERT INTO Users VALUES('%d', '%s', SHA('%s'))", user_id, username, password);
     int rows = stmt.executeUpdate(query);
-    if(rows != 0) { 
+
+    String query2 = String.format("INSERT INTO general_users (user_id, creation_date) VALUES('%d', '2022-12-01')", user_id);
+    int rows2 = stmt.executeUpdate(query2);
+
+    if((rows != 0) && (rows2 != 0)) { 
         %> <div class="message"><p>Registration Successful</p></div> <% 
-        response.sendRedirect("index.jsp");
+        response.sendRedirect("login.jsp");
     } else { 
         %> <div class="message"><p>Registration Unsuccessful</p></div> <% 
     }
+
+    stmt.close();
+    con.close();
+  }
+
+  catch(SQLException e) {
+    out.println("SQLException caught: " + e.getMessage());
+  }
+}
+
+else if ((request.getParameter("username")) != null && (request.getParameter("password") != null) && (request.getParameter("user_role") != null)) {
+  int user_id = 0;
+  String username = request.getParameter("username");
+  String password = request.getParameter("password");
+  String db = "FeedMeUp";
+  String un = "root";
+  String pw = "root";
+
+  try {
+    java.sql.Connection con; 
+    Class.forName("com.mysql.cj.jdbc.Driver");
+    con = DriverManager.getConnection("jdbc:mysql://localhost:3306/FeedMeUp?autoReconnect=true&useSSL=false", un, pw);
+
+    Statement stmt = con.createStatement();
+    ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM Users");
+
+    while (rs.next()) {
+    	user_id = rs.getInt(1) + 1;
+    }
+
+    String query = String.format("INSERT INTO Users VALUES('%d', '%s', SHA('%s'))", user_id, username, password);
+    int rows = stmt.executeUpdate(query);
+
+    String query2 = String.format("INSERT INTO admins VALUES('%d', 'true')", user_id);
+    int rows2 = stmt.executeUpdate(query2);
+
+    if((rows != 0) && (rows2 != 0)) { 
+        %> <div class="message"><p>Registration Successful</p></div> <% 
+        response.sendRedirect("login.jsp");
+    } else { 
+        %> <div class="message"><p>Registration Unsuccessful</p></div> <% 
+    }
+
     stmt.close();
     con.close();
   }

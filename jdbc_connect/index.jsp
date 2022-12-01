@@ -145,7 +145,8 @@
 
 
                   <button class="btn btn-sm btn-outline-secondary" type="submit" name="asianCuisineButton">Asian
-                    Cuisine</button>
+                    Cuisine</button><br><br>
+                  <button class="btn btn-sm btn-outline-secondary" type="submit" name="upload_video" id="upload_video">Upload a video</button>
                 </form>
               </nav>
 
@@ -182,6 +183,7 @@
                                         <h5 class="card-title"><%=title %></h5>
                                         <p class="card-text"><%=viewCount %> views</p>
                                         <a href="#" class="btn btn-primary">Like</a>
+                                        <a href="rate_video.jsp" class="btn btn-primary">Rate</a>
                                       </div>
                                     </div>
                                     <%
@@ -195,7 +197,13 @@
 
                 
                 }
+
                 if(request.getParameter("asianCuisineButton") !=null){ out.println("Asian cuisine button"); } 
+
+                if (request.getParameter("upload_video") != null) {
+                  response.sendRedirect("videos.jsp");
+                }
+
                 %>
 
 

@@ -109,6 +109,7 @@ hr {
 <%
 if (request.getParameter("recipe_name") != null) {
     int recipe_id = 0;
+    String recipe_name = request.getParameter("recipe_name");
     String cuisine = request.getParameter("cuisine");
     int cost = Integer.parseInt(request.getParameter("cost"));
     int cooking_time = Integer.parseInt(request.getParameter("cooking_time"));
@@ -131,11 +132,12 @@ if (request.getParameter("recipe_name") != null) {
             recipe_id = rs.getInt(1) + 1;
         }
 
-        String query = String.format("INSERT INTO Recipes VALUES('%d', '%s', '%s', '%d', '%d', '%s')", recipe_id, cuisine, ingredients, cost, cooking_time, steps);
+        String query = String.format("INSERT INTO Recipes VALUES('%d', '%s', '%s', '%s', '%d', '%d', '%s')", recipe_id, recipe_name, cuisine, ingredients, cost, cooking_time, steps);
         int rows = stmt.executeUpdate(query);
 
         if (rows > 0) {
             %> <div class="message"><p>Recipe Upload Successful</p></div> <%
+            response.sendRedirect("videos.jsp");
         }
 
         else {

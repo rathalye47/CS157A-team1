@@ -19,7 +19,7 @@
             .container {
               padding: 25px;
               width: 500px;
-              height: 500px;
+              height: 450px;
               margin: auto;
               top: 50%;
               transform: translate(0, 22.5%);
@@ -87,29 +87,47 @@
           String username = request.getParameter("username");
           String password = request.getParameter("password");
           boolean status = false;
+
           String db = "FeedMeUp";
           String un = "root";
           String pw = "root";
+
           try {
             java.sql.Connection con; 
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/FeedMeUp?autoReconnect=true&useSSL=false", un, pw);
+
             Statement stmt = con.createStatement();
             String query = String.format("SELECT username, password,user_id FROM Users WHERE username = '%s' AND password = SHA('%s')", username, password);
             ResultSet rs = stmt.executeQuery(query);
             status=rs.next();
+
             if(status == true) { 
                 %> <div class="message"><p>Login Successful</p></div> <% 
-                  session.setAttribute("username", username);
-                  session.setAttribute("user_id",rs.getInt(3));
-                  response.sendRedirect("index.jsp");
+                  int user_id = rs.getInt(3);
+                  String query2 = String.format("SELECT user_id FROM general_users WHERE user_id = '%d'", user_id);
+                  ResultSet rs2 = stmt.executeQuery(query2);
+                  boolean status2 =rs2.next();
+
+                  if (status2 == true) {
+                    session.setAttribute("username", username);
+                    session.setAttribute("user_id", user_id);
+                    response.sendRedirect("index.jsp");
+                  }
+
+                  else {
+                    session.setAttribute("admin_id", user_id);
+                    response.sendRedirect("admin_home.jsp");
+                  }
 
             } else { 
                 %> <div class="message"><p>Login Unsuccessful</p></div> <% 
             }
+
             stmt.close();
             con.close();
           }
+
           catch(SQLException e) {
             out.println("SQLException caught: " + e.getMessage());
           }
