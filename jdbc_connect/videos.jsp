@@ -31,7 +31,7 @@
     <header class="header-1">
       <nav class="navbar navbar-expand-lg bg-default navbar-absolute">
         <div class="container">
-          <a class="navbar-brand text-white" href="javascript:;">FeedMeUp</a>
+          <a class="navbar-brand text-white" href="index.jsp">FeedMeUp</a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-header-1"
             aria-controls="navbar-header-1" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -114,19 +114,26 @@
           </div>
         </div>
               <%-- ADD VIDEO HERE --%>
+      <form method='post' action='videos.jsp'>
+      <button class="btn btn-sm btn-outline-secondary" type="submit" name="upload_recipe" id="upload_recipe">Upload recipe</button>
+      </form><br>
+
       <form method = 'post' action="videos.jsp" enctype = "multipart/form-data>
-      <label for="formFileMultiple" class="form-label">Multiple files input example</label>
+      <label for="formFileMultiple" class="form-label"></label>
       <input class="form-control" name="uploadVideo" type="file" id="formFileMultiple" multiple />
-      <button type="submit" class="btn btn-dark">Upload</button>
+      <button type="submit" class="btn btn-dark">Upload Video</button>
       </form>
       </div>
 
       <%
+      if (request.getParameter("upload_recipe") != null) {
+        response.sendRedirect("recipe.jsp");
+      }
+
       if(request.getParameter("uploadVideo") != null){
         String videoTitle = request.getParameter("uploadVideo");
-        String fromFile = File.separator + "Users" + File.separator + "supernova" + File.separator + "Downloads" + File.separator + videoTitle;
-        String toFile = File.separator + "Users" + File.separator + "supernova" + File.separator + "Documents" + File.separator + "Coding" + File.separator + "All Classes" + File.separator + "CS157A" + File.separator + "apache-tomcat-10.0.23" + File.separator + "webapps" + File.separator + "ROOT" + File.separator + "public" + File.separator + "videos" + File.separator + videoTitle;
-
+        String fromFile = "C:\\Users\\ronro\\Downloads\\videos\\" + videoTitle;
+        String toFile = "C:\\Users\\ronro\\Downloads\\apache-tomcat-10.0.23\\webapps\\ROOT\\CS157A-team1\\jdbc_connect\\videos\\" + videoTitle;
         Path source = Paths.get(fromFile);
         Path target = Paths.get(toFile);
 
@@ -134,20 +141,23 @@
             
             Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
             
-            Class.forName("com.mysql.cj.jdbc.Driver");          
-            int user_id = (int)session.getAttribute("user_id");
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            int video_id = 0;          
             String db = "feedmeup";  
             Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + db,"root","root");
+
             Statement stmt=con.createStatement();
-            int userid = (int)session.getAttribute("user_id");
+            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM videos");
+
+            while (rs.next()) {
+              video_id = rs.getInt(1) + 1;
+            }
+
+            int user_id = (int)session.getAttribute("user_id");
             int random_int = (int)Math.floor(Math.random()*(2000000-500+1)+500);
 
-
-
-
-            String statement2 = "INSERT INTO feedmeup.Videos (video_id, title, file_path, duration, views, video_resolution, language, user_id) VALUES (null,'Banana Soup with Cold Noodle'," + "'"+ videoTitle + "','1:15', "+ Integer.toString(random_int) +", '1080p', 'EN'," + Integer.toString(userid) + ")";
-            stmt.executeUpdate(statement2);
-            out.println("<br>" + "File uploaded to database successful !");
+            String query = String.format("INSERT INTO videos VALUES ('%d', '%d', 5, 2, 11, 'Veggie Pad Thai #shorts', '%s', '1:15', '%d', '1080p', 'EN')", video_id, user_id, videoTitle, random_int);
+            stmt.executeUpdate(query);
 
         } catch (IOException e) {
           e.printStackTrace();
@@ -160,6 +170,7 @@
 
 
       %>
+
 
       <!-- VIDEOS LIST -->
       <div class="videos-list">
@@ -190,7 +201,6 @@
                   <div class="card-body">
                     <h5 class="card-title"><%=title %></h5>
                     <p class="card-text"><%=viewCount %> views</p>
-                    <a href="#" class="btn btn-primary">Like</a>
                   </div>
                 </div>
 
