@@ -95,7 +95,7 @@ hr {
 if (request.getParameter("rating") != null) {
   int rating = Integer.parseInt(request.getParameter("rating"));
   int user_id = (int)session.getAttribute("user_id");
-  int video_id = 9; // not sure how to get the video id of the video the user rated.
+  int video_id = (int)session.getAttribute("video_id");
 
   String db = "FeedMeUp";
   String un = "root";
