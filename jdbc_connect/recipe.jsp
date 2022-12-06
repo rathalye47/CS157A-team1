@@ -137,6 +137,8 @@ if (request.getParameter("recipe_name") != null) {
 
         if (rows > 0) {
             %> <div class="message"><p>Recipe Upload Successful</p></div> <%
+            session.setAttribute("recipe_id", recipe_id);
+            session.setAttribute("recipe_name", recipe_name);
             response.sendRedirect("videos.jsp");
         }
 

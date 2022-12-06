@@ -103,9 +103,11 @@
                 }
 
                 int user_id = (int)session.getAttribute("user_id");
+                int recipe_id = (int)session.getAttribute("recipe_id");
+                String recipe_name = (String)session.getAttribute("recipe_name");
                 int random_int = (int)Math.floor(Math.random()*(2000000-500+1)+500);
 
-                String query = String.format("INSERT INTO videos VALUES ('%d', '%d', 5, 2, 11, 'Veggie Pad Thai #shorts', '%s', '1:15', '%d', '1080p', 'EN')", video_id, user_id, videoTitle, random_int);
+                String query = String.format("INSERT INTO videos VALUES ('%d', '%d', '%d', 2, 11, '%s', '%s', '1:15', '%d', '1080p', 'EN')", video_id, user_id, recipe_id, recipe_name, videoTitle, random_int);
                 stmt.executeUpdate(query);
 
             } catch (IOException e) {

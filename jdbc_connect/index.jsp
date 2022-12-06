@@ -99,8 +99,8 @@
                               <p class="card-text"><%=viewCount %> views</p>
                               <a href="#" class="btn btn-primary">Like</a>
                               <input type="submit" name="rate" class="btn btn-outline-primary" value= "Rate Video <%=rs.getInt(1)%>"/>
-                            </div>
-                          </div>
+                              </div>
+                              </div>
                           <%
                       } while (rs.next());
                           %> </div> <%
@@ -118,6 +118,7 @@
                 }
                 
                 %>
+              
                 </form>
 
               <div class="section projects-3">

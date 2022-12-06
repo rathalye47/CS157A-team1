@@ -58,7 +58,8 @@
                     if(rs.next() == false){
                       out.println("Unable to query popular videos");
                     }
-                    else{                          
+                    else{  
+                        %><form class="form-inline" method='post' action="category.jsp"> <%                        
                         %><div class="videos-list"> <%
                       do {
                           String title = rs.getString("title");
@@ -72,17 +73,27 @@
                               <h5 class="card-title"><%=title %></h5>
                               <p class="card-text"><%=viewCount %> views</p>
                               <a href="#" class="btn btn-primary">Like</a>
-                              <a href="rate_video.jsp" class="btn btn-primary">Rate</a>
+                              <input type="submit" name="rate" class="btn btn-outline-primary" value= "Rate Video <%=rs.getInt(1)%>"/>
                             </div>
                           </div>
                           <%
 
                           } while (rs.next());
+
+                          if (request.getParameter("rate") != null) {
+                            String video_id_string = request.getParameter("rate");
+                            int video_id = Integer.parseInt(video_id_string.split(" ")[2].trim());
+                            session.setAttribute("video_id", video_id);
+                            response.sendRedirect("rate_video.jsp");
+                          }
                         %> </div> <%
+                        %> </form> <%
                     }
                   } catch(Exception e) {
                     out.println(e);
                   }
+ 
               %>
+
           </body>
         </html>
