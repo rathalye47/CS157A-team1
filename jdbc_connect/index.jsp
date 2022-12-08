@@ -41,9 +41,10 @@
               <nav class="navbar navbar-light bg-dark">
                 <h3>Browse Categories</h3>
                 <form class="form-inline" method='post' action="index.jsp">
-                  <button class="btn btn-outline-success" type="submit" name="popularButton"
-                    id="popularButtonID">Popular</button>
+                  <input type="submit" name="category" class="btn btn-outline-success" value= "Favorited"/> 
+                  <input type="submit" name="category" class="btn btn-outline-success" value= "Popular"/>  
                   <%
+                  session.setAttribute("sort","");
                   int userid=(int)session.getAttribute("user_id"); 
                   Class.forName("com.mysql.cj.jdbc.Driver");
                   try{
@@ -64,62 +65,13 @@
                       session.setAttribute("chosenCategory",x);
                       response.sendRedirect("category.jsp");
                     }
+                    
                   } catch(Exception e) {
                       out.println(e);
                   }
                   %>
                 </form>
               </nav>
-
-              <% 
-                if(request.getParameter("popularButton") !=null){ 
-                  try{
-                    String db="feedmeup" ; 
-                    Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/" +
-                    db,"root","root"); 
-                    Statement stmt=con.createStatement(); 
-                    String statement1= "SELECT * FROM Videos WHERE user_id <> " + Integer.toString(userid) + " ORDER BY views DESC"; 
-                    ResultSet rs=stmt.executeQuery(statement1); 
-                    if(rs.next() == false){
-                      out.println("Unable to query popular videos");
-                    }
-                    else{   
-                        %><form class="form-inline" method='post' action="index.jsp"> <%                       
-                        %><div class="videos-list"> <%
-                      do {
-                          String title = rs.getString("title");
-                          int viewCount = rs.getInt(5);
-                          String videoPath = "videos/" + rs.getString("file_path");
-                          %>
-                          <div class="card m-md-4" style='background-color: black;'>
-                              <video id="myVideo" width="420" height="345" controls="controls">
-                          <source src="<%=videoPath%>" type="video/mp4" /> </video>
-                            <div class="card-body">
-                              <h5 class="card-title"><%=title %></h5>
-                              <p class="card-text"><%=viewCount %> views</p>
-                              <a href="#" class="btn btn-primary">Like</a>
-                              <input type="submit" name="rate" class="btn btn-outline-primary" value= "Rate Video <%=rs.getInt(1)%>"/>
-                              </div>
-                              </div>
-                          <%
-                      } while (rs.next());
-                          %> </div> <%
-                    }
-                  } catch(Exception e) {
-                      out.println(e);
-                  }
-                }
-
-                if (request.getParameter("rate") != null) {
-                  String video_id_string = request.getParameter("rate");
-                  int video_id = Integer.parseInt(video_id_string.split(" ")[2].trim());
-                  session.setAttribute("video_id", video_id);
-                  response.sendRedirect("rate_video.jsp");
-                }
-                
-                %>
-              
-                </form>
 
               <div class="section projects-3">
                 <div class="container">

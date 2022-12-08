@@ -22,7 +22,7 @@ h1 {
 .container {
   padding: 25px;
   width: 500px;
-  height: 300px;
+  height: 400px;
   margin: auto;
   top: 50%;
   transform: translate(0, 22.5%);
@@ -58,22 +58,27 @@ hr {
   width: 25%;
 }
 
+.back_button {
+  background-color: #04AA6D;
+  color: white;
+  padding: 8px 8px;
+  margin: 8px ;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
 .ratebutton:hover {
   opacity: 1;
 }
-.message {
-  position: fixed;
-  left: 50%;
-  bottom: 20px;
-  transform: translate(-50%, -50%);
-  margin: 0 auto;
-}
+
 </style>
 </head>
 <body>
 
 <form method = 'post' action="rate_video.jsp">
   <div class="container">
+    <a href="category.jsp" class="back_button">< Back</a>
     <h1>Rate Video</h1>
     <p>On a scale of 1 (worst) to 5 (best), how would you rate the video you just watched?</p>
 
@@ -92,6 +97,7 @@ hr {
 </form>
 
 <%
+session.setAttribute("sort","");
 if (request.getParameter("rating") != null) {
   int rating = Integer.parseInt(request.getParameter("rating"));
   int user_id = (int)session.getAttribute("user_id");
@@ -105,16 +111,24 @@ if (request.getParameter("rating") != null) {
     java.sql.Connection con; 
     Class.forName("com.mysql.jdbc.Driver");
     con = DriverManager.getConnection("jdbc:mysql://localhost:3306/FeedMeUp?autoReconnect=true&useSSL=false", un, pw);
-
+    String query = "";
     Statement stmt = con.createStatement();
-    String query = String.format("INSERT INTO rates VALUES('%d', '%d', '%d')", user_id, video_id, rating);
+    String query0=String.format("SELECT score FROM rates WHERE user_id='%d' AND video_id='%d'", user_id, video_id);  
+    ResultSet rs0 = stmt.executeQuery(query0);
+    boolean status=rs0.next();
+    if(status == true) { 
+      query = String.format("UPDATE rates SET score='%d' WHERE user_id='%d' AND video_id='%d'", rating, user_id, video_id);
+    } else {
+      query = String.format("INSERT INTO rates VALUES('%d', '%d', '%d')", user_id, video_id, rating);
+    }
     int rows = stmt.executeUpdate(query);
     
     if(rows != 0) { 
-        %> <div class="message"><p>Rating Successful</p></div> <% 
-        response.sendRedirect("index.jsp");
+        response.sendRedirect("category.jsp");
     } else { 
-        %> <div class="message"><p>Rating Unsuccessful</p></div> <% 
+        %> <script type="text/javascript">
+          alert("Unable to rate video");
+        </script> <%
     }
 
     stmt.close();
