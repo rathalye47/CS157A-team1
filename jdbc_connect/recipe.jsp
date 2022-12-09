@@ -24,7 +24,7 @@ h1 {
 .container {
   padding: 25px;
   width: 700px;
-  height: 1200px;
+  height: 1250px;
   margin: auto;
   top: 50%;
   transform: translate(0, 0%);
@@ -85,6 +85,39 @@ hr {
     <label for="recipe_name"><b>Recipe Name</b></label><br>
     <input type="text" placeholder="Recipe Name" name="recipe_name" id="recipe_name" required><br>
 
+    <label for="category"><b>Category</b></label><br>
+    <select name="category" id="category">
+
+    <%
+    String db = "FeedMeUp";
+    String un = "root";
+    String pw = "root";
+
+    try {
+      java.sql.Connection con; 
+      Class.forName("com.mysql.jdbc.Driver");
+      con = DriverManager.getConnection("jdbc:mysql://localhost:3306/FeedMeUp?autoReconnect=true&useSSL=false", un, pw);
+
+      Statement stmt = con.createStatement();
+      ResultSet rs = stmt.executeQuery("SELECT category_name FROM Categories");
+      while (rs.next()) {
+        %>
+        <option value="<%=rs.getString(1)%>"><%=rs.getString(1)%></option>
+        <%
+      }
+
+      stmt.close();
+      con.close();
+    }
+
+    catch(SQLException e) {
+      out.println("SQLException caught: " + e.getMessage());
+    }
+
+    %>
+    </select>
+    <br>
+
     <label for="cuisine"><b>Cuisine</b></label><br>
     <input type="text" placeholder="Type of Cuisine" name="cuisine" id="cuisine" required><br>
 
@@ -110,15 +143,12 @@ hr {
 if (request.getParameter("recipe_name") != null) {
     int recipe_id = 0;
     String recipe_name = request.getParameter("recipe_name");
+    String chosen_category = request.getParameter("category");
     String cuisine = request.getParameter("cuisine");
     int cost = Integer.parseInt(request.getParameter("cost"));
     int cooking_time = Integer.parseInt(request.getParameter("cooking_time"));
     String ingredients = request.getParameter("ingredients");
     String steps = request.getParameter("steps");
-
-    String db = "FeedMeUp";
-    String un = "root";
-    String pw = "root";
 
     try {
         java.sql.Connection con; 
@@ -139,6 +169,7 @@ if (request.getParameter("recipe_name") != null) {
             %> <div class="message"><p>Recipe Upload Successful</p></div> <%
             session.setAttribute("recipe_id", recipe_id);
             session.setAttribute("recipe_name", recipe_name);
+            session.setAttribute("chosen_category", chosen_category);
             response.sendRedirect("videos.jsp");
         }
 

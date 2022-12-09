@@ -25,54 +25,47 @@
           </header>
         </div>
 
-        <!-- USER PROFILE   -->
-        <div class="container py-8 h-100">
-          <div class="row d-flex justify-content-left align-items-center h-100">
-            <div class="col col-md-9 col-lg-7 col-xl-6">
-              <div class="card" style="border-radius: 15px;">
-                <div class="card-body p-2">
-                  <div class="d-flex text-black">
-                    <div class="flex-shrink-0">
-                      <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
-                        alt="Generic placeholder image" class="img-fluid"
-                        style="width: 180px; border-radius: 10px;">
-                    </div>
-                    <div class="flex-grow-1 ms-3">
-                      <h5 class="mb-1">
-
-                        <%=(String)session.getAttribute("username")%>
-
-                      </h5>
-                      <p class="mb-2 pb-1" style="color: #2b2a2a;">Food Enthusiast</p>
-                      <div class="d-flex justify-content-start rounded-3 p-2 mb-2"
-                        style="background-color: #efefef;">
-                        <div>
-                          <p class="small text-muted mb-1">Videos</p>
-                          <p class="mb-0">41</p>
-                        </div>
-                        <div class="px-3">
-                          <p class="small text-muted mb-1">Rating</p>
-                          <p class="mb-0">4.5/5</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+          <div class="bg-image d-flex justify-content-center align-items-center" style="
+                    background-color: black;
+                    height: 30vh;">
+                <div class="col-md-8 mx-auto text-center">
+                  <h2 class="display-2"><br>
+                    Welcome <%=(String)session.getAttribute("username") %>
+                  </h2>
                 </div>
               </div>
-            </div>
-          </div>
   
+          <br>
+          <br>
           <%-- ADD VIDEO HERE --%>
           <form method='post' action='videos.jsp'>
-          <button class="btn btn-sm btn-outline-primary" type="submit" name="upload_recipe" id="upload_recipe">Upload recipe</button>
+          <style>
+              body {
+                  text-align: center;
+              }
+          </style>
+          <body>
+          Please upload your recipe for your cooking video:&emsp; <button class="btn btn-dark" type="submit" name="upload_recipe" id="upload_recipe">Upload recipe</button>
           </form><br>
 
           <form method = 'post' action="videos.jsp" enctype = "multipart/form-data>
           <label for="formFileMultiple" class="form-label"></label>
-          <input class="form-control" name="uploadVideo" type="file" id="formFileMultiple" multiple />
-          <button type="submit" class="btn btn-dark">Upload Video</button>
+          Please choose a cooking video to upload:&emsp; <input name="uploadVideo" type="file" id="formFileMultiple" multiple /><br><br>
+          Click on the button to upload your cooking video:&emsp; <button type="submit" class="btn btn-dark">Upload Video</button>
           </form>
+          </body>
           </div>
+
+          <br><br>
+          <div class="bg-image d-flex justify-content-center align-items-center" style="
+                    background-color: black;
+                    height: 10vh;">
+                <div class="col-md-8 mx-auto text-center">
+                  <h2 class="display-2">
+                    Uploaded Videos
+                  </h2>
+                </div>
+              </div>
 
           <%
           if (request.getParameter("upload_recipe") != null) {
@@ -99,15 +92,21 @@
                 ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM videos");
 
                 while (rs.next()) {
-                  video_id = rs.getInt(1) + 1;
+                  video_id = rs.getInt(1) + 10; // change to +1
                 }
 
                 int user_id = (int)session.getAttribute("user_id");
                 int recipe_id = (int)session.getAttribute("recipe_id");
                 String recipe_name = (String)session.getAttribute("recipe_name");
                 int random_int = (int)Math.floor(Math.random()*(2000000-500+1)+500);
+                
+                String chosen_category = (String)session.getAttribute("chosen_category");
+                String query2 = String.format("SELECT category_id FROM categories WHERE category_name='%s'", chosen_category);
+                ResultSet rs2 = stmt.executeQuery(query2);
+                rs2.next();
+                int category_id = rs2.getInt(1);
 
-                String query = String.format("INSERT INTO videos VALUES ('%d', '%d', '%d', 2, 11, '%s', '%s', '1:15', '%d', '1080p', 'EN')", video_id, user_id, recipe_id, recipe_name, videoTitle, random_int);
+                String query = String.format("INSERT INTO videos (video_id, user_id, recipe_id, category_id, title, file_path, duration, views, video_resolution, language) VALUES ('%d', '%d', '%d', '%d', '%s', '%s', '1:00', '%d', '1080p', 'EN')", video_id, user_id, recipe_id, category_id, recipe_name, videoTitle, random_int);
                 stmt.executeUpdate(query);
 
             } catch (IOException e) {
@@ -117,8 +116,7 @@
             }
           }
           %>
-
-
+ 
           <!-- VIDEOS LIST -->
           <div class="videos-list">
             <%-- Fetching videos based on user_id --%>
@@ -132,31 +130,44 @@
             String statement1 = "SELECT * FROM Videos WHERE user_id = " + user_id;
             ResultSet rs=stmt.executeQuery(statement1);
                             
-            if(rs.next() == false){
-              out.println("Your channel is empty!" + "<br><br><br>");
-            }
-            else{
-              do {
-              String title = rs.getString("title");
-              int viewCount = rs.getInt(5);
-              String videoPath = "videos/" + rs.getString("file_path");
-              %>
-
-              <div class="card m-md-4">
-                                <video id="myVideo" width="420" height="345" controls="controls">
-              <source src="<%=videoPath%>" type="video/mp4" /> </video>
-                <div class="card-body">
-                  <h5 class="card-title"><%=title %></h5>
-                  <p class="card-text"><%=viewCount %> views</p>
-                </div>
+            while (rs.next()) {
+            String title = rs.getString("title");
+            int viewCount = rs.getInt(5);
+            String videoPath = "videos/" + rs.getString("file_path");
+            %>
+            <div class="card m-md-4" style='background-color: black;'>
+            <video id="myVideo" width="420" height="345" controls="controls">
+            <source src="<%=videoPath%>" type="video/mp4" /> </video>
+              <div class="card-body">
+                <h5 class="card-title"><%=title %></h5>
+                <form class="form-inline" method='post' action="videos.jsp">
+                <input type="hidden" name="video" value="<%=rs.getInt(1)%>" />
+                <input type="submit" style="margin:0px auto" name="remove_video" class="btn btn-outline-primary" value="Remove Video" />
+                </form>
               </div>
+            </div>
+            <%
+            
+            }
 
+            rs.close();
+            String x = request.getParameter("remove_video");
+
+            if(x!=null && x.equals("Remove Video")) { 
+              int video_id=Integer.parseInt(request.getParameter("video")); 
+              String query1=String.format("DELETE FROM Videos WHERE video_id=%d", video_id);  
+              int rows=stmt.executeUpdate(query1); 
               
-              <%
-              } while (rs.next());
-                }
-            con.close();
-          } catch (SQLException e) {
+              if(rows !=0) {
+                response.sendRedirect("videos.jsp");
+              }
+            } 
+
+            stmt.close(); 
+            con.close(); 
+          } 
+            
+          catch (SQLException e) {
             out.println("SQLException caught: "+e.getMessage());
           }
           %> 
@@ -164,3 +175,4 @@
         </div>
       </body>
     </html>
+    
