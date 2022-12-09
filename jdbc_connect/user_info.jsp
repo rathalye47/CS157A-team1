@@ -8,7 +8,7 @@
         <html lang="en">
           
           <head>
-            <title>Category</title>
+            <title>User</title>
             <!-- Font Awesome Icons -->
             <link href="css/font-awesome.css" rel="stylesheet" />
             <link rel="stylesheet" href="css/creativetim/creativetim.min.css" />
@@ -29,125 +29,96 @@
                     height: 30vh;">
                 <div class="col-md-8 mx-auto text-center">
                   <h2 class="display-2">
-                    <%= session.getAttribute("chosenCategory") %>
+                    <%= session.getAttribute("video_user") %>'s Page
                   </h2>
                   <%
-                  String category=(String)session.getAttribute("chosenCategory"); 
+                  String user=(String)session.getAttribute("video_user"); 
                   int userid=(int)session.getAttribute("user_id"); 
                   Class.forName("com.mysql.cj.jdbc.Driver");
                   try{
                     String db="feedmeup" ; 
                     Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/" +
                     db,"root","root"); 
-                    if(!(category.equals("Favorited") || category.equals("Popular"))) {
-                      Statement stmt5=con.createStatement(); 
-                      String check_category_query = String.format("SELECT * FROM prefers WHERE user_id='%d' AND category_id IN (SELECT category_id FROM Categories WHERE category_name='%s')", userid, category);
-                      ResultSet rs5 = stmt5.executeQuery(check_category_query);
-                      boolean favorited=rs5.next();  
+                    Statement stmt1=con.createStatement(); 
+                    String check_report_query = String.format("SELECT * FROM report WHERE reporter_user_id='%d' AND reported_user_id IN (SELECT user_id FROM Users WHERE username='%s')", userid, user);
+                    ResultSet rs1 = stmt1.executeQuery(check_report_query);
+                    boolean reported=rs1.next();  
 
                     %>
-                  <form method='post' action="category.jsp">
-                    <% if(favorited == true) { %>
-                        <input type="submit" name="unfavCatButton" class="btn btn-outline-success" value="Unfavorite"/>
+                  <form method='post' action="user_info.jsp">
+                    <% if(reported == true) { %>
+                        <input type="submit" name="reportButton" class="btn btn-outline-danger" value="Reported" disabled/>
                       <% } else { %>
-                        <input type="submit" name="favCatButton" class="btn btn-outline-success" value="Favorite" />
+                        <input type="submit" name="reportButton" class="btn btn-outline-danger" value="Report" />
                       <% } %>
                   </form>
-                  <%}%>
                 </div>
               </div>
               
               <nav class="navbar navbar-light bg-dark">
                 <h3>Sort By</h3>
-                <form class="form-inline" method='post' action="category.jsp">
-                <input type="submit" name="sort" class="btn btn-outline-primary" value= "Low Rating"/> 
-                 <input type="submit" name="sort" class="btn btn-outline-primary" value= "High Rating"/>  
+                <form class="form-inline" method='post' action="user_info.jsp">
+                <input type="submit" name="user_sort" class="btn btn-outline-primary" value= "Low Rating"/> 
+                 <input type="submit" name="user_sort" class="btn btn-outline-primary" value= "High Rating"/>  
                 </form>
               </nav>
 
               <%
-              session.setAttribute("prev_page", "cat");
+              
+              session.setAttribute("prev_page", "user");
               // go back button
               if(request.getParameter("categoryButton") !=null){ 
-                session.setAttribute("chosenCategory","");
-                response.sendRedirect("index.jsp");
-              }
-            
-              // unfavorite button
-              if(request.getParameter("unfavCatButton") !=null){ 
-                Statement stmt6=con.createStatement(); 
-                String unfav_query = String.format("DELETE FROM prefers WHERE user_id='%d' AND category_id IN (SELECT category_id FROM Categories WHERE category_name='%s')", userid, category);
-                int rows = stmt6.executeUpdate(unfav_query);
-                if(rows != 0) { 
-                  response.sendRedirect("category.jsp");
-                } else { 
-                  %> <script type="text/javascript">
-                    alert("Unable to unfavorite category");
-                  </script> <%
-                }
-              }
-
-              // favorite button
-              if(request.getParameter("favCatButton") !=null){ 
-                Statement stmt7=con.createStatement(); 
-                String fav_query = String.format("INSERT INTO prefers VALUES ('%d', (SELECT category_id FROM Categories WHERE category_name='%s'))", userid, category);
-                int rows1 = stmt7.executeUpdate(fav_query);
-                if(rows1 != 0) { 
-                  response.sendRedirect("category.jsp");
-                } else { 
-                  %> <script type="text/javascript">
-                    alert("Unable to favorite category");
-                  </script> <%
-                }
-              }
-
-              // direction to sort in
-              if(request.getParameter("sort") !=null) {
-                String x=request.getParameter("sort"); 
-                session.setAttribute("sort", x);
                 response.sendRedirect("category.jsp");
+              }
+
+              // report button
+              if(request.getParameter("reportButton") !=null){ 
+                Statement stmt5=con.createStatement(); 
+                String report_query = String.format("INSERT INTO report VALUES('%d', (SELECT user_id FROM Users WHERE username='%s'))", userid, user);
+                int rows = stmt5.executeUpdate(report_query);
+                if(rows != 0) { 
+                  response.sendRedirect("user_info.jsp");
+                } else { 
+                  %> <script type="text/javascript">
+                    alert("Unable to report user");
+                  </script> <%
+                }
+              }
+             
+              // direction to sort in
+              if(request.getParameter("user_sort") !=null) {
+                String x=request.getParameter("user_sort"); 
+                session.setAttribute("user_sort", x);
+                response.sendRedirect("user_info.jsp");
               } 
               %>
 
-              <%-- DISPLAY CHOSEN CATEGORY VIDEO --%>
+              <%-- DISPLAY USERS VIDEOS --%>
               <% 
-                  // get sort if there is any
                   String sortby= "";
-                  if (session.getAttribute("sort") != null) {
-                    sortby=(String)session.getAttribute("sort"); 
+                  if (session.getAttribute("user_sort") != null) {
+                    sortby=(String)session.getAttribute("user_sort"); 
                   }
-                  Class.forName("com.mysql.cj.jdbc.Driver");
-                    String statement3 = "";
+                  
                     Statement stmt=con.createStatement(); 
+                    // subquery to get user_id
+                    String user_id_query = String.format("(SELECT user_id FROM Users WHERE username='%s')", user);
                     // subquery for getting video ratings
                     String rating_query = "LEFT JOIN (SELECT video_id, AVG(score) AS rating FROM rates GROUP BY video_id)ratings";
-                    // query for popular button
-                    // query for popular button
-                    if(session.getAttribute("chosenCategory").equals("Popular")) {
-                      statement3 = "SELECT * FROM Videos "+ rating_query+ " ON Videos.video_id=ratings.video_id NATURAL JOIN Users WHERE user_id <> " + Integer.toString(userid); 
-                    } 
-                    // query for favorites button
-                    else if(session.getAttribute("chosenCategory").equals("Favorited")) {
-                      statement3= "SELECT * FROM Videos JOIN save ON Videos.video_id = save.video_id " + rating_query + " ON Videos.video_id=ratings.video_id JOIN Users ON Videos.user_id=Users.user_id WHERE save.user_id="+userid;
-                    } 
-                    // query for specific categories
-                    else { 
-                      statement3= "SELECT *  FROM Videos  INNER JOIN Categories  ON Videos.category_id=Categories.category_id " + rating_query + " ON Videos.video_id=ratings.video_id NATURAL JOIN Users WHERE Categories.category_name= '" + session.getAttribute("chosenCategory") + "'  AND Videos.user_id!="+userid; 
-                    }
+                    String video_query = "SELECT * FROM Videos "+ rating_query+ " ON Videos.video_id=ratings.video_id WHERE user_id IN " +user_id_query; 
                   
                     // add order by specification if sort is chosen
                     if(sortby.equals("Low Rating")) {
-                      statement3 = statement3 + " ORDER BY rating ASC";
+                      video_query = video_query + " ORDER BY rating ASC";
                     } else if (sortby.equals("High Rating")) {
-                      statement3 = statement3 + " ORDER BY rating DESC";
+                      video_query= video_query + " ORDER BY rating DESC";
                     }
          
-                    ResultSet rs=stmt.executeQuery(statement3);
-
+                    ResultSet rs=stmt.executeQuery(video_query);
 
                     // display the videos
                     %> <div class="videos-list"> <%
-                    while (rs.next()){    
+                    while (rs.next()){     
                       // get the rating value to display
                       String rating_value = "";   
                       if (rs.getDouble("rating") != 0) {
@@ -158,7 +129,7 @@
 
                       // check if the video has already been favorited by the user
                       Statement stmt4=con.createStatement(); 
-                      String check_save_query = String.format("SELECT * FROM save WHERE user_id='%d' AND video_id='%d'", userid, rs.getInt("video_id"));
+                      String check_save_query = String.format("SELECT * FROM save WHERE user_id='%d' AND video_id='%d'", userid, rs.getInt(1));
                       ResultSet rs4 = stmt4.executeQuery(check_save_query);
                       boolean status=rs4.next();    
 
@@ -174,31 +145,40 @@
                           <div class="card-body">
                             <h5 class="card-title"><%=title %></h5>
                             <p class="card-text">Rating: <%=rating_value %></p>
+                            
                             <!--form for favorite and rate button-->
-                            <form method='post' action="category.jsp">
-                              <input type="hidden" name="video-id" value='<%=rs.getInt("video_id")%>' />
-                              <p class="card-text"> Uploaded by: 
-                              <input type="submit" name="video_user" class="btn" value='<%=rs.getString("username")%>'/></p>
-
+                            <form class="form-inline" method='post' action="user_info.jsp">
+                              <table>
+                              <input type="hidden" name="video-id" value="<%=rs.getInt(1)%>" />
+                              <tr>
+                                <td>
+                                  <input type="submit" name="recipe-submit" class="btn btn-outline-primary" value="View Recipe" style='margin-top:15px; margin-bottom:15px;'/>
+                                </td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td>
                               <% if(status == true) { %>
                                 <input type="submit" name="save-submit" class="btn btn-primary" value="Favorited" disabled/>
                               <% } else { %>
                                 <input type="submit" name="save-submit" class="btn btn-primary" value="Favorite" />
                               <% } %>
-                              <input type="submit" name="rate-submit" class="btn btn-outline-primary" value='Rate Video <%=rs.getInt("video_id")%>' />
-
+                                </td>
+                                <td>
+                              <input type="submit" name="rate-submit" class="btn btn-outline-primary" value="Rate Video" />
+                                </td>
+                              </tr>
+                            </table>
                             </form>
                           </div>  
                       </div> <%
                     } %> </div> <%
                     
-                    // view user link
-                    if(request.getParameter("video_user") !=null){ 
-                    
-                      String user=request.getParameter("video_user");
-                      session.setAttribute("video_user", user);
-                      response.sendRedirect("user_info.jsp");
-                      return;
+                    // go to recipe page
+                    if (request.getParameter("recipe-submit") != null) {
+                      int video_id=Integer.parseInt(request.getParameter("video-id"));
+                      session.setAttribute("view_recipe", video_id);
+                      response.sendRedirect("recipe_info.jsp");
                     }
 
                     // go to page to give video a rating
@@ -215,7 +195,7 @@
                       String save_query = String.format("INSERT INTO save VALUES('%d', '%d')", userid, video_id);
                       int rows = stmt3.executeUpdate(save_query);
                       if(rows != 0) { 
-                          response.sendRedirect("category.jsp");
+                          response.sendRedirect("user_info.jsp");
                         } else { 
                           %> <script type="text/javascript">
                             alert("Unable to favorite video");

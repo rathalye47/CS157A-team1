@@ -79,18 +79,18 @@ INSERT INTO Recipes (recipe_id, recipe_name, cuisine, ingredients, cost, time, s
 INSERT INTO Recipes (recipe_id, recipe_name, cuisine, ingredients, cost, time, steps) VALUES (9, 'Spaghetti', 'Italian', 'tomatoes, garlic, basil, pasta', 45, 120, '1.in pot, simmer tomatoes, garlic, and basil');
 INSERT INTO Recipes (recipe_id, recipe_name, cuisine, ingredients, cost, time, steps) VALUES (10, 'Pie', 'American', 'pie crust, sugar, cornstarch', 50, 150, '1.preheat oven to 375F 2. in bowl mix together sugar, cornstarch, cinnamon');
 
-CREATE TABLE Videos (video_id INT NOT NULL, user_id INT NOT NULL, recipe_id INT NOT NULL, category_id INT NOT NULL, monitored_by INT, title VARCHAR(100) NOT NULL, file_path VARCHAR(100) NOT NULL, duration VARCHAR(5) NOT NULL, views INT NOT NULL, video_resolution VARCHAR(5) NOT NULL, language CHAR(2) NOT NULL, PRIMARY KEY (video_id), FOREIGN KEY(user_id) REFERENCES General_Users(user_id) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY(recipe_id) REFERENCES Recipes(recipe_id) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY(category_id) REFERENCES Categories(category_id) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY(monitored_by) REFERENCES Admins(user_id) ON UPDATE CASCADE ON DELETE CASCADE);
+CREATE TABLE Videos (video_id INT NOT NULL, user_id INT NOT NULL, recipe_id INT NOT NULL, category_id INT NOT NULL, title VARCHAR(100) NOT NULL, file_path VARCHAR(100) NOT NULL, PRIMARY KEY (video_id), FOREIGN KEY(user_id) REFERENCES General_Users(user_id) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY(recipe_id) REFERENCES Recipes(recipe_id) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY(category_id) REFERENCES Categories(category_id) ON UPDATE CASCADE ON DELETE CASCADE);
 
-INSERT INTO Videos VALUES (1, 1, 2, 7, 15, '7 Recipes You Can Make in 5 Minutes', 'video1.mp4', '1:10', 1233, '1080p', 'EN');
-INSERT INTO Videos VALUES (10, 3, 7, 2, NULL, '''Sweetest'' Lemon Chicken out there', 'video2.mp4', '1:11', 7654, '720p', 'EN');
-INSERT INTO Videos VALUES (2, 5, 3, 2, 11, 'How to Make the PERFECT STEAK #shorts', 'video3.mp4', '1:15', 1435265, '1080p', 'EN');
-INSERT INTO Videos VALUES (3, 7, 9, 0, 15, 'Ratatouille #shorts', 'video4.mp4', '1:15', 5325265, '1080p', 'EN');
-INSERT INTO Videos VALUES (4, 4, 10, 9, 13, 'SANDWICH WITH MEATBALLS #shorts #asmr', 'video5.mp4', '1:20', 943123, '720p', 'EN');
-INSERT INTO Videos VALUES (5, 8, 5, 2, 11, 'Chicken pad Thai #shorts', 'video6.mp4', '0:45', 1231543, '1080p', 'TR');
-INSERT INTO Videos VALUES (6, 3, 4, 2, NULL, 'Duck Bao', 'video7.mp4', '1:15', 1243256, '1080p', 'EN');
-INSERT INTO Videos VALUES (7, 1, 6, 8, 15, 'Sushi #shorts', 'video8.mp4', '1:45', 634501, '1080p', 'EN');
-INSERT INTO Videos VALUES (8, 6, 8, 5, 19, 'Vietnamese pho #shorts', 'video9.mp4', '1:15', 5325265, '1080p', 'VN');
-INSERT INTO Videos VALUES (9, 9, 1, 5, 13, 'Cooking Basics For Students: Veggie Stock', 'video10.mp4', '1:25', 65474652, '1080p', 'EN');
+INSERT INTO Videos VALUES (1, 1, 2, 7, '7 Recipes You Can Make in 5 Minutes', 'video1.mp4');
+INSERT INTO Videos VALUES (10, 3, 7, 2, '''Sweetest'' Lemon Chicken out there', 'video2.mp4');
+INSERT INTO Videos VALUES (2, 5, 3, 2, 'How to Make the PERFECT STEAK #shorts', 'video3.mp4');
+INSERT INTO Videos VALUES (3, 7, 9, 0, 'Ratatouille #shorts', 'video4.mp4');
+INSERT INTO Videos VALUES (4, 4, 10, 9, 'SANDWICH WITH MEATBALLS #shorts #asmr', 'video5.mp4');
+INSERT INTO Videos VALUES (5, 8, 5, 2, 'Chicken pad Thai #shorts', 'video6.mp4');
+INSERT INTO Videos VALUES (6, 3, 4, 2, 'Duck Bao', 'video7.mp4');
+INSERT INTO Videos VALUES (7, 1, 6, 8, 'Sushi #shorts', 'video8.mp4');
+INSERT INTO Videos VALUES (8, 6, 8, 5, 'Vietnamese pho #shorts', 'video9.mp4');
+INSERT INTO Videos VALUES (9, 9, 1, 5, 'Cooking Basics For Students: Veggie Stock', 'video10.mp4');
 
 CREATE TABLE rates (user_id INT NOT NULL, video_id INT NOT NULL, score INT NOT NULL, FOREIGN KEY (user_id) REFERENCES General_Users (user_id) ON UPDATE CASCADE ON DELETE CASCADE, FOREIGN KEY (video_id) REFERENCES Videos(video_id) ON UPDATE CASCADE ON DELETE CASCADE);
 

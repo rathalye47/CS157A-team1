@@ -24,7 +24,7 @@ h1 {
 .container {
   padding: 25px;
   width: 700px;
-  height: 1250px;
+  height: 1400px;
   margin: auto;
   top: 50%;
   transform: translate(0, 0%);
@@ -65,6 +65,16 @@ hr {
   opacity: 1;
 }
 
+.back_button {
+  background-color: #04AA6D;
+  color: white;
+  padding: 8px 8px;
+  margin: 8px ;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
 .message {
   position: fixed;
   top: 10px;
@@ -77,7 +87,13 @@ hr {
 <body>
 <form method = 'post' action="recipe.jsp">
   <div class="container">
-    <h1>Upload Recipe</h1>
+    <a href="videos.jsp" class="back_button">< Back</a>
+
+    <% if ((int)session.getAttribute("update_recipe") != 0) {%>
+      <h1>Update Recipe</h1>
+    <%}else {%>
+      <h1>Upload Recipe</h1>
+    <%}%>
     <p>Please enter the details of your recipe below.</p>
 
     <hr style="text-align:left;margin-left:0">
@@ -94,6 +110,7 @@ hr {
     String pw = "root";
 
     try {
+
       java.sql.Connection con; 
       Class.forName("com.mysql.jdbc.Driver");
       con = DriverManager.getConnection("jdbc:mysql://localhost:3306/FeedMeUp?autoReconnect=true&useSSL=false", un, pw);
@@ -134,8 +151,12 @@ hr {
     <textarea id="steps" name="steps" placeholder="List of Steps" style="height:200px; width:650px" required></textarea><br>
 
     <hr style="text-align:left;margin-left:0">
+    <% if ((int)session.getAttribute("update_recipe") != 0) {%>
+     <button type="submit" class="recipebutton">Update Recipe</button>
+    <%}else {%>
+     <button type="submit" class="recipebutton">Upload Recipe</button>
+    <%}%>
 
-    <button type="submit" class="recipebutton">Upload Recipe</button>
   </div>
 </form>
 
@@ -156,25 +177,41 @@ if (request.getParameter("recipe_name") != null) {
         con = DriverManager.getConnection("jdbc:mysql://localhost:3306/FeedMeUp?autoReconnect=true&useSSL=false", un, pw);
 
         Statement stmt = con.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM Recipes");
+        if ((int)session.getAttribute("update_recipe") != 0) {
+          recipe_id=(int)session.getAttribute("update_recipe"); 
 
-        while (rs.next()) {
-            recipe_id = rs.getInt(1) + 1;
-        }
+          String query = String.format("UPDATE Recipes SET recipe_name='%s', cuisine='%s', ingredients='%s', cost='%d', time='%d', steps='%s' WHERE recipe_id='%d'", recipe_name, cuisine, ingredients, cost, cooking_time, steps, recipe_id);
+          int rows = stmt.executeUpdate(query);
 
-        String query = String.format("INSERT INTO Recipes VALUES('%d', '%s', '%s', '%s', '%d', '%d', '%s')", recipe_id, recipe_name, cuisine, ingredients, cost, cooking_time, steps);
-        int rows = stmt.executeUpdate(query);
+          if (rows > 0) {
+              %> <div class="message"><p>Recipe Update Successful</p></div> <%
+              response.sendRedirect("videos.jsp");
+          }
 
-        if (rows > 0) {
-            %> <div class="message"><p>Recipe Upload Successful</p></div> <%
-            session.setAttribute("recipe_id", recipe_id);
-            session.setAttribute("recipe_name", recipe_name);
-            session.setAttribute("chosen_category", chosen_category);
-            response.sendRedirect("videos.jsp");
-        }
+          else {
+              %> <div class="message"><p>Recipe Update Unsuccessful</p></div> <%
+          }
+        } else {
+          ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM Recipes");
 
-        else {
-            %> <div class="message"><p>Recipe Upload Unsuccessful</p></div> <%
+          while (rs.next()) {
+              recipe_id = rs.getInt(1) + 1;
+          }
+
+          String query = String.format("INSERT INTO Recipes VALUES('%d', '%s', '%s', '%s', '%d', '%d', '%s')", recipe_id, recipe_name, cuisine, ingredients, cost, cooking_time, steps);
+          int rows = stmt.executeUpdate(query);
+
+          if (rows > 0) {
+              %> <div class="message"><p>Recipe Upload Successful</p></div> <%
+              session.setAttribute("recipe_id", recipe_id);
+              session.setAttribute("recipe_name", recipe_name);
+              session.setAttribute("chosen_category", chosen_category);
+              response.sendRedirect("videos.jsp");
+          }
+
+          else {
+              %> <div class="message"><p>Recipe Upload Unsuccessful</p></div> <%
+          }
         }
 
         stmt.close();

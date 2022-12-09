@@ -22,7 +22,7 @@ h1 {
 .container {
   padding: 25px;
   width: 500px;
-  height: 525px;
+  height: 600px;
   margin: auto;
   top: 50%;
   transform: translate(0, 15%);

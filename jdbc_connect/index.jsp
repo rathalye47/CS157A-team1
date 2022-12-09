@@ -55,10 +55,22 @@
                     String statement2= "SELECT category_name FROM Categories INNER JOIN Videos ON Categories.category_id=Videos.category_id GROUP BY category_name;";
                     ResultSet rs=stmt.executeQuery(statement2); 
 
-                    while (rs.next()) {
-                      String category_name = rs.getString("category_name"); %>
+                    while (rs.next()) { 
+                      String category_name = rs.getString("category_name"); 
+                      // check if the category has been favorited by the user
+                      Statement stmt4=con.createStatement(); 
+                      String check_fav_query = String.format("SELECT * FROM prefers WHERE user_id='%d' AND category_id IN (SELECT category_id FROM Categories WHERE category_name='%s')", userid, category_name);
+                      ResultSet rs4 = stmt4.executeQuery(check_fav_query);
+                      boolean status=rs4.next(); 
+                      if(status == true) { 
+                      %>
+                      <input type="submit" name="category" class="btn btn-outline-success" value= "<%=category_name%>"/>
+                    <% } else {
+                    %>
                       <input type="submit" name="category" class="btn btn-outline-primary" value= "<%=category_name%>"/>
-                    <% } 
+                    <% 
+                    }
+                   }
                     %> </div> <%
                     String x=request.getParameter("category"); 
                     if(x!=null) {

@@ -78,7 +78,11 @@ hr {
 
 <form method = 'post' action="rate_video.jsp">
   <div class="container">
-    <a href="category.jsp" class="back_button">< Back</a>
+    <%if(((String)session.getAttribute("prev_page")).equals("user")) {%>
+          <a href="user_info.jsp" class="back_button">< Back</a>
+       <% } else if (((String)session.getAttribute("prev_page")).equals("cat")) {%>
+          <a href="category.jsp" class="back_button">< Back</a>
+        <%}%>
     <h1>Rate Video</h1>
     <p>On a scale of 1 (worst) to 5 (best), how would you rate the video you just watched?</p>
 
@@ -101,7 +105,8 @@ session.setAttribute("sort","");
 if (request.getParameter("rating") != null) {
   int rating = Integer.parseInt(request.getParameter("rating"));
   int user_id = (int)session.getAttribute("user_id");
-  int video_id = (int)session.getAttribute("video_id");
+  int video_id = (int)session.getAttribute("rate_video_id");
+  out.println(video_id);
 
   String db = "FeedMeUp";
   String un = "root";
@@ -124,7 +129,11 @@ if (request.getParameter("rating") != null) {
     int rows = stmt.executeUpdate(query);
     
     if(rows != 0) { 
-        response.sendRedirect("category.jsp");
+        if(((String)session.getAttribute("prev_page")).equals("user")) {
+          response.sendRedirect("user_info.jsp");
+        } else if (((String)session.getAttribute("prev_page")).equals("cat")) {
+          response.sendRedirect("category.jsp");
+        }
     } else { 
         %> <script type="text/javascript">
           alert("Unable to rate video");

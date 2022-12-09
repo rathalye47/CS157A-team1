@@ -19,7 +19,7 @@
             .container {
               padding: 25px;
               width: 500px;
-              height: 450px;
+              height: 475px;
               margin: auto;
               top: 50%;
               transform: translate(0, 22.5%);
