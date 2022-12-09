@@ -74,6 +74,20 @@
         background: white;
         color: black;
       }
+
+      .view {
+        background: none!important;
+        border: none;
+        padding: 0!important;
+        color: black;
+        cursor: pointer;
+        margin-right:60px;
+      }
+
+      .view:hover {
+        color:blue;
+      }
+
     </style>
   </head>
 
@@ -104,10 +118,10 @@
         while (rs.next()) { %>
           <tr>
             <td>
-              <a href="admin_user_info.jsp">
-                <input type='text' class='name' style='border: 0' value='<%=rs.getString(2)%>' disabled/>
-                <%session.setAttribute("user", rs.getInt(1));%>
-              </a>
+              <form action="admin_users.jsp" method="POST">
+              <input type="hidden" name="user-num" value="<%=rs.getInt(1)%>" />
+              <input type="submit" name="view_user" class="view" value="<%=rs.getString(2)%>" />
+            </form>
             </td>
             <td>
               <form action="admin_users.jsp" method="POST" style="padding-top: 5px">
@@ -119,6 +133,14 @@
       </table>
       <% 
         rs.close(); 
+        // view user link
+        if(request.getParameter("view_user") !=null){ 
+          int user=Integer.parseInt(request.getParameter("user-num"));
+          session.setAttribute("view_user", user);
+          response.sendRedirect("admin_user_info.jsp");
+          return;
+        }
+
         String x=request.getParameter("submit"); 
         if(x!=null && x.equals("Remove")) { 
           int user_id=Integer.parseInt(request.getParameter("user")); 

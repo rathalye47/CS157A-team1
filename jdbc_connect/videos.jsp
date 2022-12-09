@@ -103,12 +103,10 @@
                 String chosen_category = (String)session.getAttribute("chosen_category");
                 String query2 = String.format("SELECT category_id FROM categories WHERE category_name='%s'", chosen_category);
                 ResultSet rs2 = stmt.executeQuery(query2);
-                out.println(query2);
                 rs2.next();
                 int category_id = rs2.getInt(1);
 
                 String query = String.format("INSERT INTO videos (video_id, user_id, recipe_id, category_id, title, file_path) VALUES ('%d', '%d', '%d', '%d', '%s', '%s')", video_id, user_id, recipe_id, category_id, recipe_name, videoTitle);
-                out.println(query);
                 stmt.executeUpdate(query);
                 session.setAttribute("recipe_id", 0);
                }

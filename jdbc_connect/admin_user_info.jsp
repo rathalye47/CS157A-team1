@@ -110,7 +110,7 @@
       <% 
       int admin_id=(int)session.getAttribute("admin_id"); 
       String db="FeedMeUp"; 
-      int user=(int)session.getAttribute("user"); 
+      int user=(int)session.getAttribute("view_user"); 
       String un="root"; 
       String pw="root"; 
       try { 
@@ -126,7 +126,6 @@
             <td>
               <div class="videos-list"><%
                 String title = rs.getString("title");
-                int viewCount = rs.getInt(5);
                 String videoPath = "videos/" + rs.getString("file_path");
                 %>
                 <div class="card m-md-4">
@@ -134,15 +133,13 @@
                   <source src="<%=videoPath%>" type="video/mp4" /> </video>
                   <div class="card-body">
                     <h5 class="card-title"><%=title %></h5>
-                    <p class="card-text"><%=viewCount %> views</p>
                   </div>
+                  <form action="admin_user_info.jsp" method="POST" style="padding-top: 5px">
+                  <input type="hidden" name="video" value='<%=rs.getInt("video_id")%>' />
+                  <input type="submit" name="submit" class="remove_button" value="Remove" />
+                </form>
               </div>
             </td>
-            <td>
-              <form action="admin_user_info.jsp" method="POST" style="padding-top: 5px">
-                <input type="hidden" name="video" value="<%=rs.getInt(1)%>" />
-                <input type="submit" name="submit" class="remove_button" value="Remove" />
-              </form>
           </tr>
       <% } %>
       </table>
