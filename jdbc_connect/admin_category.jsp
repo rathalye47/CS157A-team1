@@ -161,9 +161,9 @@
                 </script> 
               <% 
           } else {
-            ResultSet rs1 = stmt.executeQuery("SELECT COUNT(*) FROM Categories");
+            ResultSet rs1 = stmt.executeQuery("SELECT MAX(category_id) FROM Categories");
             while (rs1.next()) {
-              category_id = rs1.getInt(1);
+              category_id = rs1.getInt(1) + 1;
             }
             String query1 = String.format("INSERT INTO Categories VALUES('%d', '%s', '%d')", category_id, cat, admin_id);
             int rows1 = stmt.executeUpdate(query1);

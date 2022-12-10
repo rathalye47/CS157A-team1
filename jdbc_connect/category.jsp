@@ -185,7 +185,7 @@
                               <% } else { %>
                                 <input type="submit" name="save-submit" class="btn btn-primary" value="Favorite" />
                               <% } %>
-                              <input type="submit" name="rate-submit" class="btn btn-outline-primary" value='Rate Video <%=rs.getInt("video_id")%>' />
+                              <input type="submit" name="rate-submit" class="btn btn-outline-primary" value='Rate Video' />
 
                             </form>
                           </div>  

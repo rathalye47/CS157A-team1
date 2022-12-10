@@ -20,12 +20,11 @@
       }
 
       .container {
-        padding: 25px;
         width: 500px;
         height: auto;
         margin: auto;
-        top: 50%;
-        transform: translate(0, 22.5%);
+        margin-top:30px;
+        margin-bottom:30px;
         background-color: white;
       }
 
@@ -104,10 +103,7 @@
     </ul>
     <div class="container">
       <a href="admin_users.jsp" class="back_button">< Back</a>
-      <h1>User Videos</h1>
-
-      <table style="width:50%; margin:auto;">
-      <% 
+      <%
       int admin_id=(int)session.getAttribute("admin_id"); 
       String db="FeedMeUp"; 
       int user=(int)session.getAttribute("view_user"); 
@@ -117,6 +113,16 @@
         java.sql.Connection con;
         Class.forName("com.mysql.jdbc.Driver");
         con=DriverManager.getConnection("jdbc:mysql://localhost:3306/FeedMeUp?autoReconnect=true&useSSL=false", un, pw); 
+        Statement stmt1=con.createStatement(); 
+        String query1 = String.format("SELECT username FROM Users WHERE user_id=%d", user); 
+        ResultSet rs1=stmt1.executeQuery(query1);
+        while(rs1.next()) {
+        %>
+      <h1><%=rs1.getString(1)%>'s Videos</h1>
+      <%}%>
+
+      <table style="width:50%; margin:auto;">
+      <%  
         Statement stmt=con.createStatement(); 
         String query = String.format("SELECT * FROM Videos WHERE user_id=%d", user); 
         ResultSet rs=stmt.executeQuery(query);
@@ -148,8 +154,8 @@
         String x=request.getParameter("submit"); 
         if(x!=null && x.equals("Remove")) { 
           int video_id=Integer.parseInt(request.getParameter("video")); 
-          String query1=String.format("DELETE FROM Videos WHERE video_id=%d", video_id);  
-          int rows=stmt.executeUpdate(query1); 
+          String query3=String.format("DELETE FROM Videos WHERE video_id=%d", video_id);  
+          int rows=stmt.executeUpdate(query3); 
           // refresh the page here
           if(rows !=0) {
             response.sendRedirect("admin_user_info.jsp");
