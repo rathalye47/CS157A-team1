@@ -110,35 +110,39 @@ hr {
       String query = String.format("SELECT * FROM Recipes WHERE recipe_id IN (SELECT recipe_id FROM Videos WHERE video_id=%d)", video_id);
       ResultSet rs = stmt.executeQuery(query);
       while (rs.next()) { %>
-        <tr>
+        <tr><br>
             <td>
-              <%=rs.getString(2)%>
+              <b>Recipe Name:</b> <%=rs.getString(2)%>
             </td>
             <td></td>
         </tr>
         <tr>
-            <td>
-              <%=rs.getString("cuisine")%>
+            <td><br>
+              <b>Cuisine:</b> <%=rs.getString("cuisine")%>
             </td>
             <td></td>
         </tr>
         <tr>
-          <td>
-              <%=rs.getInt("time")%>
-            </td>
-            <td>
-              <%=rs.getInt("cost")%>
-            </td>
+          <td><br>
+            <b>Time:</b> <%=rs.getInt("time")%> minutes
+          </td>
+          <td></td>
         </tr>
         <tr>
-           <td>
-              <%=rs.getString("ingredients")%>
+          <td><br>
+            <b>Cost:</b> $<%=rs.getInt("cost")%>
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+           <td><br>
+            <b>Ingredients:</b> <%=rs.getString("ingredients")%>
             </td>
             <td></td> 
         </tr>
         <tr>
-           <td>
-              <%=rs.getString("steps")%>
+           <td><br>
+            <b>Steps:</b> <%=rs.getString("steps")%>
             </td>
             <td></td> 
         </tr>
